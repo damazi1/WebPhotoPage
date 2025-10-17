@@ -3,6 +3,8 @@ import Login from './Components/Login.tsx'
 import Register from './Components/Register.tsx';
 import Home from './Components/Home.tsx';
 import Informacje from './Components/Informacje.tsx';
+import Explore from './Components/Explore.tsx';
+import Profile from './Components/Profile.tsx';
 import { Routes, Route, Link } from "react-router-dom";
 
 function App() {
@@ -10,16 +12,22 @@ function App() {
   return (
     <div>
       <nav className='navbar-app'>
-        <Link to="/"> Strona główna </Link>
-        <Link to="/login"> Logowanie </Link>
-        <Link to="/register"> Rejestracja </Link>
-        <Link to="/informacje">Informacje</Link>
+        <Link to="/"> Logo </Link>
+        <Link to="/Explore"> Explore </Link>
+        <Link to="/Information">Informacje</Link>
+        <button className='Log-in'><Link to="/Login"> Logowanie </Link></button>
+        <button className='Sign-up'><Link to="/Register"> Rejestracja </Link></button>
+        <Link to="/Profile">Profil</Link>
+        
       </nav>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/informacje" element={<Informacje />} />
+        <Route path="/Explore" element={<Explore />} />
+        <Route path="/Information" element={<Informacje />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Register" element={<Register />} />
+        <Route path="/Profile" element={<Profile/>}/>
+
       </Routes>
     </div>
   )

@@ -1,14 +1,56 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .navbar-app {
   display: flex;
   align-items: center;
   justify-content: space-around;
   height: 5vh;
   background-color: white;
-  padding: 0 10px;
+  padding: 0 15px;
   box-sizing: border-box; 
-  overflow-x: hidden; 
+  overflow-x: hidden;
+
+  position: sticky;
+  top: 0;        
+  z-index: 1000; 
 }
 
 .body{
-  background-color: black;
+  background-color: white;
 }
+
+.navbar-app a{
+  text-decoration: none;
+  color: black;
+}
+
+.navbar-app a:hover{
+  text-decoration: none;
+  color: black;
+  text-shadow: 1px red;
+}
+.Log-in{
+  background-color: red;
+}
+
+.Sign-up{
+
+  background-color: lightgrey;
+
+}
+.Log-in,.Sign-up{
+    height: 4vh;
+  border: none;
+    border-radius: 10px;
+}
+
+.Log-in a{
+  color: white;
+}
+.Sign-up a{
+  color: black;
+}
+

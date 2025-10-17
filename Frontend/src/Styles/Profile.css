@@ -1,0 +1,45 @@
+.prof-main{
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+}
+
+.prof-main p{
+    font-size: 150%;
+    font-weight: 550;
+}
+
+.prof-main a{
+    text-decoration: none;
+
+}
+
+.prof-main label{
+    padding: 10px;
+}
+.prof-main label button{
+    padding: 10px
+}
+.prof-main label a{
+    padding: 10px;
+}
+
+.prof-main-utworzone {
+    color: white;
+    background-color: red;
+}
+
+.prof-main-zapisane {
+    color: black;
+    background-color: lightgray;
+}
+
+.prof-main-zapisane, .prof-main-utworzone{
+    height: 4vh;
+    border: none;
+    border-radius: 10px;
+}

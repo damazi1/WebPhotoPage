@@ -1,7 +1,7 @@
 function Informacje(){
     return(
         <div>
-            Informacje
+            <p>Tu beda jakies informacje o firmie itp maile ble ble ble</p>
         </div>
     )
 }

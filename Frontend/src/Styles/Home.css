@@ -1,4 +1,41 @@
-.main{
-    background-color: black;
-    height: 95vh;
+.home-main{
+    background-color: white;
+}
+.home-main2{
+    background-color: rgb(255, 253, 146);
+    color: darkred;
+
+}
+.home-main3{
+    background-color: rgb(218, 255, 246);
+    color: darkblue;
+}
+.home-main4{
+    background-color: rgb(255, 226, 235);
+    color: darkred;
+}
+
+.home-main, .home-main2, .home-main3, .home-main4{
+    height: 100vh;
+    text-align: center;
+}
+.Kropki div{
+    background-color: lightgray;
+    height: 0.5vh;
+    width: 0.5vh;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.Kropki div:hover{
+    cursor: pointer;
+}
+.Kropki{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    box-sizing: border-box; 
+    overflow-x: hidden;
+    gap: 10px; 
 }

@@ -1,0 +1,40 @@
+.search-bar{
+    width: 70vh;
+    height: 5vh;
+    border: none;
+    border-radius: 10px;
+    background-color: lightgrey;
+}
+
+.explore-main{
+    text-align: center;
+    justify-content: center;
+    
+}
+.explore-main-tekst{
+    padding: 50px;
+    text-align: center;
+    transform: translateX(-16%);
+    font-weight:bolder;
+}
+
+@media (max-width: 600px) {
+  .explore-main-tekst{
+    transform: translateX(-8%);
+  }
+}
+
+.explore-images1{
+    display: grid;
+    grid-template-columns: repeat()
+}
+
+.explore-see-more{
+    border: none;
+    border-radius: 10px;
+    background-color: lightgray;
+    color: black;
+    height: 5vh;
+    width: 10vh;
+    font-weight: 550;
+}
