@@ -43,4 +43,3 @@ function useSectionScroll(classNames: string[], navHeightVh = 5, cooldownMs = 10
 }
 
 export default useSectionScroll;
-
