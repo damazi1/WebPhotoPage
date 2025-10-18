@@ -14,8 +14,12 @@
     background-color: rgb(255, 226, 235);
     color: darkred;
 }
+.home-main5{
+    background-color: greenyellow;
+    color: black;
+}
 
-.home-main, .home-main2, .home-main3, .home-main4{
+.home-main, .home-main2, .home-main3, .home-main4, .home-main5{
     height: 95vh;
     text-align: center;
 }
