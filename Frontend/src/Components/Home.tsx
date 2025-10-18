@@ -1,8 +1,8 @@
 import '../Styles/Home.css'
-import useFastScroll from '../Scripts/Wheel';
+import useSectionScroll from '../Scripts/Wheel';
 import {useState, useEffect} from 'react'
 function Home(){
-    useFastScroll(7.3);
+    useSectionScroll(['home-main', 'home-main2', 'home-main3', 'home-main4'], 5, 1000);
     const mottos=[
         "weeknight dinner idea",
         "home decor idea",
