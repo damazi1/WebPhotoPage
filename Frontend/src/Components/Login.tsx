@@ -19,7 +19,7 @@ function Login() {
         const token = await res.text(); // backend zwraca token jako string
         localStorage.setItem("jwt", token);
         alert("Zalogowano pomyślnie!");
-        navigate("/Home"); // przekierowanie po zalogowaniu
+        navigate("/"); // przekierowanie po zalogowaniu
       } else {
         alert("Błędne dane logowania");
       }

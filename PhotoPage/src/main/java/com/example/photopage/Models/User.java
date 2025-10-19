@@ -17,6 +17,7 @@ public class User {
     private String name;
     private String password;
     private String phone;
+    private String Avatar;
 
     // Gettery i settery
     public Integer getUserId() { return userId; }
@@ -36,4 +37,7 @@ public class User {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getAvatar() { return Avatar; }
+    public void setAvatar(String avatar) { this.Avatar = avatar; }
 }
