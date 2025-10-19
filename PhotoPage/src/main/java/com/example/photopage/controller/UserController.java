@@ -1,8 +1,9 @@
-package com.example.photopage.Controllers;
+package com.example.photopage.controller;
 
-import com.example.photopage.Models.User;
-import com.example.photopage.Repositories.UserRepository;
+import com.example.photopage.model.User;
+import com.example.photopage.repository.UserRepository;
 import com.example.photopage.Security.JwtUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -10,18 +11,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtils = jwtUtils;
-    }
 
     // Pobierz wszystkich użytkowników
     @GetMapping
@@ -34,7 +30,6 @@ public class UserController {
     public User addUser(@RequestBody User user) {
         user.setAccountCreateDate(LocalDate.now());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setAvatar("/Photos/Default/avatar-default.webp"); // pełna ścieżka w resources
         return userRepository.save(user);
     }
 

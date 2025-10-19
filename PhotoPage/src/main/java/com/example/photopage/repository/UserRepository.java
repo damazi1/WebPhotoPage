@@ -1,6 +1,6 @@
-package com.example.photopage.Repositories;
+package com.example.photopage.repository;
 import java.util.Optional;
-import com.example.photopage.Models.User;
+import com.example.photopage.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.example.photopage.Models;
+package com.example.photopage.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

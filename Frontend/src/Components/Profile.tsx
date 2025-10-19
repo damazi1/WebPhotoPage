@@ -30,7 +30,7 @@ function Profile() {
   return (
     <div className='prof-main'>
       <label>
-        <img src={profile.avatar || '/Photos/Default/avatar-default.webp'} alt="zdjęcie profilowe" />
+        <img src={profile.avatar || 'avatar-default.webp'} alt="zdjęcie profilowe" />
 
         <p>{profile.name}</p>
         <p>Liczba obserwujących: {profile.followers}</p>
