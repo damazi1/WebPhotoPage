@@ -5,6 +5,7 @@ import Home from './Components/Home.tsx';
 import Informacje from './Components/Informacje.tsx';
 import Explore from './Components/Explore.tsx';
 import Profile from './Components/Profile.tsx';
+import UserList from './Components/UserList.tsx'
 import { Routes, Route, Link } from "react-router-dom";
 
 function App() {
@@ -18,7 +19,8 @@ function App() {
         <button className='Log-in'><Link to="/Login"> Logowanie </Link></button>
         <button className='Sign-up'><Link to="/Register"> Rejestracja </Link></button>
         <Link to="/Profile">Profil</Link>
-        
+        <Link to="/UserList">Userlist</Link>
+
       </nav>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -27,6 +29,8 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Profile" element={<Profile/>}/>
+        <Route path="/UserList" element={<UserList/>}/>
+
 
       </Routes>
     </div>
