@@ -1,3 +1,7 @@
+.Logo img{
+    width: 20%;
+}
+
 .home-main{
     background-color: white;
 }
@@ -18,8 +22,11 @@
     background-color: greenyellow;
     color: black;
 }
-
-.home-main, .home-main2, .home-main3, .home-main4, .home-main5{
+.home-main{
+    height: 90vh;
+    text-align: center;
+}
+.home-main2, .home-main3, .home-main4, .home-main5{
     height: 95vh;
     text-align: center;
 }

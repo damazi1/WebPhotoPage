@@ -29,8 +29,9 @@ useSectionScroll(['home-main', 'home-main2', 'home-main3', 'home-main4','home-ma
     return (
         <div>
             <div className='home-main'>
-                <h1 style={{fontSize:"75px"}}>Get your next</h1>
-                <p style={{color:`${colors[motto]}`,fontSize:"75px"}}className='motto-style'>{mottos[motto]}</p>
+                <div className='Logo'><img src='public/logo.png'></img></div>
+                <h1>Odkrywaj. Zapisuj. Inspiruj się.</h1>
+                <p style={{color:`${colors[motto]}`}}className='motto-style'>{mottos[motto]}</p>
                 <div className='Kropki'>
                     <div onClick={()=>setMotto(0)}style={motto==0 ? {backgroundColor:`${colors[motto]}`}:{}}></div>
                     <div onClick={()=>setMotto(1)}style={motto==1 ? {backgroundColor:`${colors[motto]}`}:{}}></div>
@@ -39,7 +40,7 @@ useSectionScroll(['home-main', 'home-main2', 'home-main3', 'home-main4','home-ma
                 </div>
             </div>
             <div className='home-main2'>
-Tu maja byc zdjecia
+<p>Zobacz więcej</p>
             </div>
             <div className='home-main3'>
 Tu maja byc zdjecia
