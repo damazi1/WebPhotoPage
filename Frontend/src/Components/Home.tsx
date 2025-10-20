@@ -2,7 +2,7 @@ import '../Styles/Home.css'
 import useSectionScroll from '../Scripts/Wheel';
 import {useState, useEffect} from 'react'
 function Home(){
-    useSectionScroll(['home-main', 'home-main2', 'home-main3', 'home-main4'], 5, 1000);
+useSectionScroll(['home-main', 'home-main2', 'home-main3', 'home-main4','home-main5'], 5, 1000);
     const mottos=[
         "weeknight dinner idea",
         "home decor idea",
@@ -46,6 +46,11 @@ Tu maja byc zdjecia
             </div>
             <div className='home-main4'>
 Tu maja byc zdjecia
+            </div>
+            <div className='home-main5'>
+                <img src=""/> jakies zdjecie tu ma byc
+
+                <h1>Zarejestruj<br/>się, aby<br/>odkrywać<br/>pomysły</h1>
             </div>
         </div>
     )
