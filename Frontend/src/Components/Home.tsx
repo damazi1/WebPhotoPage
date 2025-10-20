@@ -29,7 +29,7 @@ useSectionScroll(['home-main', 'home-main2', 'home-main3', 'home-main4','home-ma
     return (
         <div>
             <div className='home-main'>
-                <div className='Logo'><img src='public/logo.png'></img></div>
+                <div className='Logo'><img src='/logo.png'></img></div>
                 <h1>Odkrywaj. Zapisuj. Inspiruj się.</h1>
                 <p style={{color:`${colors[motto]}`}}className='motto-style'>{mottos[motto]}</p>
                 <div className='Kropki'>
