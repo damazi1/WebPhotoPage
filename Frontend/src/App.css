@@ -2,20 +2,21 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 17px;
 }
 .navbar-app {
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: 5vh;
-  background-color: white;
+  height: 9vh;
   padding: 0 15px;
-  box-sizing: border-box; 
-  overflow-x: hidden;
-
   position: sticky;
   top: 0;        
   z-index: 1000; 
+  box-sizing: border-box; 
+  overflow-x: hidden;
+  background-color: white;
 }
 
 .body{
@@ -25,32 +26,53 @@
 .navbar-app a{
   text-decoration: none;
   color: black;
+  transition: all 0.3s ease;
 }
 
-.navbar-app a:hover{
+.navbar-app .Main a:hover{ 
   text-decoration: none;
-  color: black;
-  text-shadow: 1px red;
+  color: black !important;
+  text-shadow: 1px 1px 1px lightgray;
+  transition: all 0.3s ease;
+}
+
+.navbar-app .User .Log-in:hover{
+  text-decoration: none;
+  color: black !important;
+  text-shadow: 1px 1px 1px lightgray;
+  transition: all 0.3s ease;
+}
+.navbar-app .User .Sign-up:hover{
+  text-decoration: none;
+  color: gray !important;
+  text-shadow: 1px 1px 1px lightgray;
+  transition: all 0.3s ease;
 }
 .Log-in{
   background-color: red;
+  color: white !important;
 }
 
 .Sign-up{
-
-  background-color: lightgrey;
-
-}
-.Log-in,.Sign-up{
-    height: 4vh;
-  border: none;
-    border-radius: 10px;
-}
-
-.Log-in a{
-  color: white;
-}
-.Sign-up a{
   color: black;
+  background-color: lightgrey;
+}
+.User a{
+  padding:17px;
+  border: 1px solid white;
+  border-radius: 20px;
+}
+.User{
+  gap:10px;
+  display: flex;
+  height: 5vh;
+  align-items: center;
+  justify-content: space-around;
 }
 
+.Main{
+  display: flex;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  gap:70px;
+  width: 60vw;
+}
