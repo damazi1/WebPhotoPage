@@ -14,11 +14,12 @@ function App() {
     <div>
       <nav className='navbar-app'>
         <div className='Main'>
+          <img src='main/logo.png'></img>
           <Link to="/">Main</Link>
           <Link to="/Explore">Explore</Link>
           <Link to="/Information">Informacje</Link>
         </div>
-        
+        <span style={{ width: "30vw" }}></span>
         <div className='User'>
           <Link className='Log-in' to="/Login">Logowanie</Link>
           <Link className='Sign-up' to="/Register">Rejestracja</Link>

@@ -2,21 +2,23 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-size: 17px;
+  font-size: 1vw;
+}
+.Main img{
+    width: 15%;
 }
 .navbar-app {
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: 9vh;
+  height: 5vw;
   padding: 0 15px;
-  position: sticky;
+  position: fixed;
   top: 0;        
   z-index: 1000; 
-  box-sizing: border-box; 
-  overflow-x: hidden;
   background-color: white;
+  width: 100vw;
 }
 
 .body{
@@ -74,5 +76,7 @@
   display: flex;
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   gap:70px;
-  width: 60vw;
+  width: 50vw;
+  align-items: center;
+  justify-content: space-around;
 }
