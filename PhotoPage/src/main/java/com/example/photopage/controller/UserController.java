@@ -1,8 +1,8 @@
 package com.example.photopage.controller;
 
+import com.example.photopage.config.JwtService;
 import com.example.photopage.model.User;
 import com.example.photopage.repository.UserRepository;
-import com.example.photopage.Security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +17,7 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
+    private final JwtService jwtService;
 
     // Pobierz wszystkich użytkowników
     @GetMapping
@@ -41,11 +41,8 @@ public class UserController {
         }
 
         String token = authHeader.substring(7); // usuń "Bearer "
-        if (!jwtUtils.validateJwtToken(token)) {
-            throw new RuntimeException("Invalid JWT token");
-        }
 
-        String email = jwtUtils.getEmailFromJwtToken(token);
+        String email = jwtService.extractUsername(token);
 
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
