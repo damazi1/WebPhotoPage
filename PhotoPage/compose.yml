@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: photoapp
+      DB_USERNAME: postgres
+      DB_PASSWORD: toor
+    networks:
+      - default
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+  db:
+    image: postgres:16.10-alpine3.22
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: toor
+      POSTGRES_DB: photoapp
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - default
+volumes:
+  pgdata:
+
+networks:
+  default:
+    driver: bridge
