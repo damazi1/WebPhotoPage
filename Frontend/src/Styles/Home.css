@@ -183,3 +183,100 @@
 
 /* Blokada hovera podczas wejścia (jeśli używasz) */
 .slot.no-hover{ pointer-events: none; }
+
+/* home-main2
+/* Sekcja */
+.home-main2 {
+  background: #fffdf2;
+  color: #111;
+  padding: 5vw 0;
+  font-family: "Familjen Grotesk", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Intro akapit na górze */
+.home-main2 .intro {
+  font-weight: 400;
+  font-size: 1.2vw;
+  text-align: center;
+  padding: 0 25vw;
+  line-height: 1.5;
+}
+
+/* Układ treści (tekst + obrazek) */
+.home-main2 .entries {
+  display: flex;
+  gap: 4vw;
+  padding: 5vw 20vw;
+  align-items: flex-start;
+}
+
+/* Kolumna z punktami */
+.home-main2 .checks {
+  width: 40vw;
+  display: grid;
+  gap: 1.2vw;
+}
+
+/* Pojedynczy punkt */
+.home-main2 .checks p {
+  display: inline-flex;
+  align-items: center;
+  gap: 1vw;
+  font-weight: 400;
+  font-size: 1.2vw;
+  margin: 0; /* reset */
+}
+
+/* Ikona (ptaszek) */
+.home-main2 .checks img {
+  width: 2vw;
+  height: 2vw;
+}
+
+/* Obrazek po prawej */
+.home-main2 .image-side img {
+  width: 30vw;
+  height: 25vw;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+/* ---------- ANIMACJA SCROLL-REVEAL ---------- */
+
+/* stan początkowy – ukryte, przesunięte w lewo */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  will-change: opacity, transform;
+}
+
+/* obrazek: dłuższy fade */
+.image-side img.scroll-reveal {
+  transition: opacity 2s ease, transform 2s ease;
+}
+
+/* po wejściu w viewport */
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Opóźnienia dla punktów (fala 1..6) */
+.home-main2 .checks p.scroll-reveal:nth-child(1) { transition-delay: 0s;   }
+.home-main2 .checks p.scroll-reveal:nth-child(2) { transition-delay: 0.5s; }
+.home-main2 .checks p.scroll-reveal:nth-child(3) { transition-delay: 1.0s; }
+.home-main2 .checks p.scroll-reveal:nth-child(4) { transition-delay: 1.5s; }
+.home-main2 .checks p.scroll-reveal:nth-child(5) { transition-delay: 2.0s; }
+.home-main2 .checks p.scroll-reveal:nth-child(6) { transition-delay: 2.5s; }
+
+/* ---------- RESPONSYWNOŚĆ ---------- */
+@media (max-width: 992px) {
+  .home-main2 .intro { font-size: 1.1rem; padding: 0 8vw; }
+  .home-main2 .entries { flex-direction: column; padding: 8vw; }
+  .home-main2 .checks { width: 100%; }
+  .home-main2 .checks p { font-size: 1rem; gap: .8rem; }
+  .home-main2 .checks img { width: 1.2rem; height: 1.2rem; }
+  .home-main2 .image-side img { width: 100%; height: auto; }
+}
