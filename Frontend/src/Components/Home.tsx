@@ -1,6 +1,7 @@
 ﻿import "../Styles/Home.css";
 import useSectionScroll from "../Scripts/Wheel";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useScrollReveal } from "../Scripts/ScrollReveal";
 
 type HeroTheme = {
     phrase: string;
@@ -71,6 +72,7 @@ const ROTATE_DELAY_MS = 6000;
 const FADE_START_MS = 5500; // <-- zaczynamy fade-out sekundę przed rotacją
 const FADE_DURATION_MS = ROTATE_DELAY_MS - FADE_START_MS; // = 1000 ms
 function Home() {
+    useScrollReveal();
     const sectionClasses = useMemo(
         () => ["home-main", "home-main2", "home-main3", "home-main4", "home-main5"],
         []
@@ -183,14 +185,45 @@ function Home() {
 
             </div>
 
-            <div className="home-main2">
-                <p>Zobacz więcej</p>
+            <section className="home-main2">
+                <p className="intro scroll-reveal">
+                    Oto dlaczego warto z nami — inspiracje, społeczność i pomysły dopasowane do Ciebie.
+                </p>
+
+                <div className="entries">
+                    <article className="checks">
+                        <p className="scroll-reveal">
+                            <img src="main/icons/check.png" alt="" /> Darmowe zapisywanie pomysłów
+                        </p>
+                        <p className="scroll-reveal">
+                            <img src="main/icons/check.png" alt="" /> Rekomendacje dopasowane do Ciebie
+                        </p>
+                        <p className="scroll-reveal">
+                            <img src="main/icons/check.png" alt="" /> Nowe inspiracje każdego dnia
+                        </p>
+                        <p className="scroll-reveal">
+                            <img src="main/icons/check.png" alt="" /> Kreatywna społeczność twórców
+                        </p>
+                        <p className="scroll-reveal">
+                            <img src="main/icons/check.png" alt="" /> Kolekcje i tablice tematyczne
+                        </p>
+                        <p className="scroll-reveal">
+                            <img src="main/icons/check.png" alt="" /> Szybki podgląd i zapisywanie
+                        </p>
+                    </article>
+
+                    <div className="image-side">
+                        <img className="scroll-reveal" src="main/blue/1.jpeg" alt="Przykładowy widok" />
+                    </div>
+                </div>
+            </section>
+
+
+            <div className="home-main3">
+                
             </div>
 
-            <div className="home-main3">Tu mają być zdjęcia</div>
-            <div className="home-main4">Tu mają być zdjęcia</div>
-
-            <div className="home-main5">
+            <div className="home-main4">
                 <img src="" alt="end" /> jakies zdjecie tu ma byc
                 <h1>
                     Zarejestruj
@@ -236,3 +269,5 @@ function Slot({ img, index, isVisible }: SlotProps) {
         </div>
     );
 }
+
+
