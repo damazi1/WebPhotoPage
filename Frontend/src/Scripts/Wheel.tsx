@@ -1,6 +1,26 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 
-function useSectionScroll(classNames: string[], navHeightVh = 5, cooldownMs = 1000) {
+type SectionConfig = string | { className: string; offset?: number };
+
+type NormalizedSection = {
+  className: string;
+  offset?: number;
+};
+
+function normalizeSections(sections: SectionConfig[]): NormalizedSection[] {
+  return sections.map((section) =>
+    typeof section === 'string'
+      ? { className: section }
+      : { className: section.className, offset: section.offset }
+  );
+}
+
+function useSectionScroll(
+  sectionConfigs: SectionConfig[],
+  navSelector = '.navbar-app',
+  cooldownMs = 1000
+) {
+  const sections = useMemo(() => normalizeSections(sectionConfigs), [sectionConfigs]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isScrolling = useRef(false);
 
@@ -8,17 +28,14 @@ function useSectionScroll(classNames: string[], navHeightVh = 5, cooldownMs = 10
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
 
-      // Jeśli cooldown aktywny — ignorujemy
       if (isScrolling.current) return;
 
-      // Uruchamiamy cooldown
       isScrolling.current = true;
       setTimeout(() => {
         isScrolling.current = false;
       }, cooldownMs);
 
-      // Określenie kierunku scrolla
-      if (e.deltaY > 0 && currentIndex < classNames.length - 1) {
+      if (e.deltaY > 0 && currentIndex < sections.length - 1) {
         setCurrentIndex((i) => i + 1);
       } else if (e.deltaY < 0 && currentIndex > 0) {
         setCurrentIndex((i) => i - 1);
@@ -27,17 +44,36 @@ function useSectionScroll(classNames: string[], navHeightVh = 5, cooldownMs = 10
 
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
-  }, [currentIndex, classNames.length, cooldownMs]);
+  }, [cooldownMs, currentIndex, sections.length]);
 
   useEffect(() => {
-    const navHeightPx = window.innerHeight * (navHeightVh / 100);
-    const target = document.querySelector(`.${classNames[currentIndex]}`) as HTMLElement | null;
+    const navHeightPx = (() => {
+      if (!navSelector) return 0;
+      const navElement = document.querySelector(navSelector) as HTMLElement | null;
+      return navElement?.getBoundingClientRect().height ?? 0;
+    })();
+
+    const targetClass = sections[currentIndex]?.className;
+    if (!targetClass) return;
+
+    const target = document.querySelector(`.${targetClass}`) as HTMLElement | null;
 
     if (target) {
-      const sectionTop = target.offsetTop - navHeightPx;
-      window.scrollTo({ top: sectionTop, behavior: 'smooth' });
+      const computedStyles = window.getComputedStyle(target);
+      const marginTop = parseFloat(computedStyles.marginTop) || 0;
+
+      let scrollTarget = target.getBoundingClientRect().top + window.scrollY - navHeightPx;
+
+      const offset = sections[currentIndex]?.offset ?? -marginTop;
+      scrollTarget += offset;
+
+      if (currentIndex === 0) {
+        scrollTarget = Math.min(scrollTarget, 0);
+      }
+
+      window.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
     }
-  }, [currentIndex, classNames, navHeightVh]);
+  }, [currentIndex, navSelector, sections]);
 
   return currentIndex;
 }
