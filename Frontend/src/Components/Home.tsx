@@ -220,7 +220,19 @@ function Home() {
 
 
             <div className="home-main3">
-                
+                <div className="home3">
+                    <div className="home3-2">
+                        <img className="scroll-reveal" src="main/home3/1.jpeg"></img>
+                        <img className="scroll-reveal" src="main/home3/2.jpeg"></img>
+                        <img className="scroll-reveal" src="main/home3/3.jpeg"></img>
+                        <img className="scroll-reveal" src="main/home3/4.jpeg"></img>
+                    </div>
+                    <img className="home3-center scroll-reveal" src="main/home3/5.jpeg"></img>
+                </div>
+                <div className="home3-text scroll-reveal">
+                        <h2>Zobacz, co możesz stworzyć.</h2>
+                        <p>Odkryj inspiracje,<br></br> które pobudzą Twoją wyobraźnię i<br></br> pomogą Ci tworzyć wyjątkowe rzeczy każdego dnia.</p>
+                </div>
             </div>
 
             <div className="home-main4">
