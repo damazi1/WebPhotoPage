@@ -15,7 +15,7 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
-    private final String secretKey = "bardzoDługiIBezpiecznyKluczJwtKtóryPowinienByćTrzymanyWTajemnicy"; // zmień na długi losowy klucz
+    private final String secretKey = "bardzoDlugiIBezpiecznyKluczJwtKtoryPowinienBycTrzymanyWTajemnicy"; // zmień na długi losowy klucz
 
     private long jwtExpiration = 3600000; // 1 godzina
 

@@ -9,6 +9,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
@@ -29,8 +31,8 @@ public class AuthenticationService {
                 .setName(registerRequest.getName())
                 .setEmail(registerRequest.getEmail())
                 .setPassword(passwordEncoder.encode(registerRequest.getPassword()))
-                .setPhone(registerRequest.getPhone())
-                .setRoles(registerRequest.getRoles());
+                .setRoles(registerRequest.getRoles())
+                .setAccountCreateDate(LocalDate.now());
         return userRepository.save(user);
     }
     public User login(LoginRequest loginRequest) {

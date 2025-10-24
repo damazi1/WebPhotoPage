@@ -5,16 +5,11 @@ import com.example.photopage.dto.LoginRequest;
 import com.example.photopage.dto.LoginResponse;
 import com.example.photopage.dto.RegisterRequest;
 import com.example.photopage.model.User;
-import com.example.photopage.repository.UserRepository;
 import com.example.photopage.service.AuthenticationService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/auth")
