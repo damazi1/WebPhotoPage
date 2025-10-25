@@ -1,28 +1,37 @@
-import { useState } from "react";
+import {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import '../Styles/Register.css';
+import axios from "axios";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); // hook do przekierowań
 
+    /**
+     * Tak powinny wyglądać odwołania mniej więcej
+     * możecie to poprawić według własnych potrzeb
+     * Polecam utworzyć wszystkie zapytania w osobnym pakiecie
+     * importować pakiet i tylko wywoływać metody żeby tu było mniej kodu
+     * Wszystko idzie po ciasteczkach więc wierze że dacie radę
+     * Ciasteczka są w przeglądarce pod F12 -> Application -> Cookies
+     * Serwer sam obsługuje ciasteczka więc nie trzeba ich ręcznie dodawać
+     * piszecie zapytanie i backend wszystko ogarnia
+     */
+
   const handleLogin = async () => {
     try {
-      const res = await fetch("http://localhost:8080/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-
-      if (res.ok) {
-        const token = await res.text(); // backend zwraca token jako string
-        localStorage.setItem("jwt", token);
-        alert("Zalogowano pomyślnie!");
-        navigate("/"); // przekierowanie po zalogowaniu
-      } else {
-        alert("Błędne dane logowania");
-      }
+        const response = await axios.post("http://localhost:8080/auth/login",
+            {email, password},
+            {
+                headers: {'Content-Type': 'application/json'},
+                withCredentials: true
+            });
+        if (response.status === 200) {
+            navigate("/");
+            return {success: true, data: response.data};
+        }
+        return {success: false, message: response.data.message};
     } catch (error) {
       console.error("Błąd logowania:", error);
     }

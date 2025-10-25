@@ -51,6 +51,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
+        if (token == null || token.isBlank()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             final String userEmail = jwtService.extractUsername(token);
 
