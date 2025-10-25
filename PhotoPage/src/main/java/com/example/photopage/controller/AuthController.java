@@ -6,7 +6,11 @@ import com.example.photopage.dto.LoginResponse;
 import com.example.photopage.dto.RegisterRequest;
 import com.example.photopage.model.User;
 import com.example.photopage.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.http.SameSiteCookies;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +29,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         User authenticatedUser = authenticationService.login(loginRequest);
+        ResponseCookie cookie = ResponseCookie.from("jwt", jwtService.genereteToken(authenticatedUser))
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(36000)
+                .sameSite(SameSiteCookies.STRICT.toString())
+                .build();
+
         String jwtToken = jwtService.genereteToken(authenticatedUser);
-        LoginResponse loginResponse = new LoginResponse().setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
-        return ResponseEntity.ok(loginResponse);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok(authenticatedUser);
     }
 }
