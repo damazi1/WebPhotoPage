@@ -230,22 +230,25 @@ function Home() {
                     <img className="home3-center scroll-reveal" src="main/home3/5.jpeg"></img>
                 </div>
                 <div className="home3-text scroll-reveal">
+                    <div className="home3-txt">
                         <h2>Zobacz, co możesz stworzyć.</h2>
                         <p>Odkryj inspiracje,<br></br> które pobudzą Twoją wyobraźnię i<br></br> pomogą Ci tworzyć wyjątkowe rzeczy każdego dnia.</p>
+                    </div>
                 </div>
             </div>
 
             <div className="home-main4">
-                <img src="" alt="end" /> jakies zdjecie tu ma byc
-                <h1>
-                    Zarejestruj
-                    <br />
-                    się, aby
-                    <br />
-                    odkrywać
-                    <br />
-                    pomysły
-                </h1>
+                <div className="register-form scroll-reveal">
+                    <h2>Zarejestruj się</h2>
+                    <p>Dołącz do naszej społeczności i zacznij tworzyć z nami!</p>
+                    <form>
+                        <input type="text" placeholder="Imię" required></input>
+                        <input type="email" placeholder="Adres e-mail" required></input>
+                        <input type="password" placeholder="Hasło" required></input>
+                        <button type="submit" className="register-btn">Zarejestruj się</button>
+                    </form>
+                </div>
+                
             </div>
         </div>
     );
