@@ -1,9 +1,41 @@
-﻿.home-main{
+﻿*{}
+.home-main{
+    position: relative;
+
     background-color: white;
     padding-top: 5vw;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     height: 100vh;
     text-align: center;
+}
+.home-main::after {
+  content: "";
+  position: absolute;
+  bottom: -40px; /* lekko poniżej sekcji, żeby świeciło spod spodu */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 250px;
+  background: linear-gradient(to top, rgba(255, 230, 0, 0.9), rgba(255, 230, 0, 0) 80%);
+  filter: blur(100px);
+  opacity: 0.9;
+  z-index: 1;
+  pointer-events: none;
+  animation: glowPulse 6s ease-in-out infinite alternate;
+}
+
+/* 🌟 animacja lekkiego "oddychania" światła */
+@keyframes glowPulse {
+  from {
+    opacity: 0.6;
+    transform: translateX(-50%) scaleY(1);
+    filter: blur(90px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1.15);
+    filter: blur(110px);
+  }
 }
 .home-main h1{
     font-size: 3.5vw;
@@ -187,12 +219,27 @@
 /* home-main2
 /* Sekcja */
 .home-main2 {
-  background: #fffdf2;
+  background: #dfc42d;
   color: #111;
   padding: 5vw 0;
   font-family: "Familjen Grotesk", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  position: relative;
 }
-
+.home-main2::after {
+  content: "";
+  position: absolute;
+  bottom: -50px; /* lekko pod sekcją — światło bije z dołu */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(to top, rgba(6, 215, 243, 0.9), rgba(255, 220, 0, 0) 80%);
+  filter: blur(120px);
+  opacity: 0.9;
+  z-index: 1;
+  pointer-events: none;
+  animation: glowPulse 6s ease-in-out infinite alternate;
+}
 /* Intro akapit na górze */
 .home-main2 .intro {
   font-weight: 400;
@@ -287,13 +334,31 @@
   align-items: center;
   background-color: #a3d2ce;
   position: relative;
+  width: 99.2vw;
 }
-
+.home-main3::after {
+  content: "";
+  position: absolute;
+  bottom: -50px; /* lekko pod sekcją — światło bije z dołu */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(to top, rgba(180, 6, 243, 0.9), rgba(255, 220, 0, 0) 80%);
+  filter: blur(120px);
+  opacity: 0.9;
+  z-index: 1;
+  pointer-events: none;
+  animation: glowPulse 6s ease-in-out infinite alternate;
+}
 /* kontener główny */
 .home3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
-  width: 30vw;
   top:-8vh;
+  padding-left: 10vw;
 }
 
 /* siatka 2x2 */
@@ -305,6 +370,7 @@
   justify-items: center;
   align-items: center;
   z-index: 0;
+  width: 25vw;
 }
 
 /* zdjęcia w siatce */
@@ -318,16 +384,20 @@
 /* SCROLL-REVEAL: stan startowy */
 .home3-2 img.scroll-reveal,
 .home3-center.scroll-reveal,
-.home3-text.scroll-reveal{
+.home3-text.scroll-reveal
+{
   opacity: 0;
   transform: translateY(40px) scale(.95);
   pointer-events: none; /* brak hover przed wejściem */
 }
-
+.home3-photo-next.scroll-reveal{
+    opacity: 0;
+}
 /* Po wejściu: odpalamy ANIMACJĘ (nie transition), hover bez laga */
 .home3-2 img.scroll-reveal.is-visible,
 .home3-center.scroll-reveal.is-visible,
-.home3-text.scroll-reveal.is-visible{
+.home3-text.scroll-reveal.is-visible,
+.home3-photo-next.scroll-reveal.is-visible{
   animation: revealIn .9s ease-out forwards; /* nadaje opacity:1 + transform:reset */
   pointer-events: auto;
 }
@@ -335,6 +405,8 @@
 /* Fala pojawiania się — opóźnienia NA ANIMACJI */
 .home-main3 .home3 .home3-2 img.scroll-reveal.is-visible:nth-child(1){ animation-delay: .4s; }
 .home-main3 .home3 .home3-2 img.scroll-reveal.is-visible:nth-child(2){ animation-delay: .6s; }
+.home3-photo-next.scroll-reveal.is-visible{ animation-delay: .6s; }
+.register-form.is-visible{ animation-delay: .6s; }
 .home-main3 .home3 .home3-2 img.scroll-reveal.is-visible:nth-child(3){ animation-delay: .8s; }
 .home-main3 .home3 .home3-2 img.scroll-reveal.is-visible:nth-child(4){ animation-delay: 1.0s; }
 .home3-center.scroll-reveal.is-visible{ animation-delay: 0.7s; }
@@ -353,7 +425,7 @@
 .home3-center{
   position: absolute;
   top: 35%;
-  left: 18%;
+  left: 48%;
   z-index: 1;
   width: 10vw;
   height: auto;
@@ -365,14 +437,45 @@
   0%   { opacity: 0;}
   100% { opacity: 1;}
 }
-.home3-text{
-  height: 100vh;
-  color:rgb(255, 0, 174);
+.home3-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
   width: 30vw;
+  color: rgb(249, 249, 249);
+  margin-top: -20vh;
+  width: 50vw;
+  
+}
+.home3-photo-next{
+  height: inherit;
+  width: auto;
+  right:0vw;
+}
+.home3-txt {
+  
+  display: flex;             /* kluczowe — włącza flexboxa wewnątrz */
+  flex-direction: column;    /* żeby h2 i p były pod sobą */
+  align-items: center;       /* wyrównanie w poziomie */
+  justify-content: center;   /* wyrównanie w pionie */
+  border: plum 0.1px solid;
+  border-radius: 15px;
+  height: 30vh;
+  padding: 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #ff00aa, #6100ff);
+  transition: transform 1s ease, box-shadow .28s ease; /* dla hovera */
+
+}
+
+.home3-txt:hover{
+  transform:scale(1.1);
+  transition: transform 1s ease, box-shadow .28s ease; /* dla hovera */
+  box-shadow: 0 12px 28px rgba(0,0,0,.28);
 }
 .home3-text h2{
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  margin-top: 15vw;
   text-align: center;
   justify-content: center;
   text-decoration: none;
@@ -384,4 +487,121 @@
   justify-content: center;
   text-decoration: none;
   font-size: 1.5vw;
+}
+
+/* 🔮 Sekcja z animowanym gradientem */
+.home-main4 {
+  height: 89.8vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  overflow: hidden;
+
+  background: linear-gradient(-45deg, #ff00aa, #6100ff, #00d9ff, #ff0099);
+  background-size: 400% 400%;
+  animation: gradientMove 10s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🪩 Formularz – animowane wejście */
+.register-form {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 40px 60px;
+  opacity: 0;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transform: scale(0.9);
+}
+.register-form.scroll-reveal.is-visible{
+  animation: popIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: auto;
+}
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+    filter: blur(10px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.03);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ✏️ Formularz i pola */
+.register-form h2 {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.register-form p {
+  font-size: 1rem;
+  margin-bottom: 25px;
+  color: #e0e0e0;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 1rem;
+}
+
+.register-form input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+/* ✨ Przycisk z efektem shine */
+.register-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, #ff00aa, #6100ff);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: transform 0.3s;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.register-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: rgba(255,255,255,0.4);
+  transform: skewX(-25deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -75%; }
+  50% { left: 125%; }
+  100% { left: 125%; }
+}
+
+.register-btn:hover {
+  transform: scale(1.05);
 }
