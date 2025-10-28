@@ -1,8 +1,8 @@
 package com.example.photopage.controller;
 
-import com.example.photopage.config.JwtService;
-import com.example.photopage.dto.LoginRequest;
+import com.example.photopage.service.JwtService;
 import com.example.photopage.dto.LoginResponse;
+import com.example.photopage.dto.LoginRequest;
 import com.example.photopage.dto.RegisterRequest;
 import com.example.photopage.model.User;
 import com.example.photopage.service.AuthenticationService;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,19 +30,24 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         User authenticatedUser = authenticationService.login(loginRequest);
-        ResponseCookie cookie = ResponseCookie.from("jwt", jwtService.genereteToken(authenticatedUser))
+        String jwtToken = jwtService.generateToken(authenticatedUser);
+        ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
-                .maxAge(36000)
+                .maxAge(Duration.ofMillis(jwtService.getExpirationTime()).toSeconds())
                 .sameSite(SameSiteCookies.STRICT.toString())
                 .build();
 
-        String jwtToken = jwtService.genereteToken(authenticatedUser);
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return ResponseEntity.ok(authenticatedUser);
+
+        LoginResponse loginResponse = new LoginResponse()
+                .setToken(jwtToken)
+                .setExpiresIn(jwtService.getExpirationTime());
+
+        return ResponseEntity.ok(loginResponse);
     }
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
