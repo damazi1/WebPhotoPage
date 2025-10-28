@@ -1,6 +1,6 @@
 package com.example.photopage.filter;
 
-import com.example.photopage.config.JwtService;
+import com.example.photopage.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

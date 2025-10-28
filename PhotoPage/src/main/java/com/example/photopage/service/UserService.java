@@ -1,7 +1,5 @@
 package com.example.photopage.service;
 
-import com.example.photopage.config.JwtService;
-import com.example.photopage.dto.UserDetails;
 import com.example.photopage.model.User;
 import com.example.photopage.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
