@@ -1,38 +1,40 @@
 import { useState } from "react";
 import '../Styles/Register.css';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [roles, setRoles] = useState("");
+  const navigate = useNavigate(); // hook do przekierowań
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // zapobiega przeładowaniu strony
+    const handleRegister = async (e) => {
+    e.preventDefault(); 
     try {
-      const res = await fetch("http://localhost:8080/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, phone })
-      });
-
-      if (res.ok) {
-        setMessage("User added successfully!");
-        setName(""); setEmail(""); setPassword(""); setPhone("");
-      } else {
-        setMessage("Failed to add user.");
-      }
+        const response = await axios.post("http://localhost:8080/auth/register",
+            {name, email, password, roles},
+            {
+                headers: {'Content-Type': 'application/json'},
+                withCredentials: true
+            });
+        if (response.status === 200) {
+            navigate("/Login");
+            return {success: true, data: response.data};
+        }
+        return {success: false, message: response.data.message};
     } catch (error) {
-      console.error(error);
-      setMessage("Error connecting to server.");
+      console.error("Błąd Rejestracji:", error);
+      setMessage("Rejestracja nie powiodła się!");
     }
   };
 
   return (
     <div className="Panel">
       <p>Sign up</p>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleRegister}>
         <label>
           Login:
           <input type="text" value={name} onChange={e => setName(e.target.value)} />
@@ -46,8 +48,8 @@ function Register() {
           <input type="email" value={email} onChange={e => setEmail(e.target.value)} />
         </label>
         <label>
-          Telefon:
-          <input type="text" value={phone} onChange={e => setPhone(e.target.value)} />
+          Role:
+          <input type="text" value={roles} onChange={e => setRoles(e.target.value)} />
         </label>
         <button type="submit">Sign up</button>
       </form>

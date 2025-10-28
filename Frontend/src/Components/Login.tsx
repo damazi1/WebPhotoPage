@@ -28,7 +28,8 @@ function Login() {
                 withCredentials: true
             });
         if (response.status === 200) {
-            navigate("/");
+            localStorage.setItem("isLoggedIn","true")
+            window.location.href = "/";
             return {success: true, data: response.data};
         }
         return {success: false, message: response.data.message};
@@ -38,7 +39,7 @@ function Login() {
   };
 
   return (
-    <div className="Panel">
+    <div className="Panel" style={{margin:"200px"}}>
       <p>Logowanie</p>
       <label>
         E-mail: <input type="text" value={email} onChange={e => setEmail(e.target.value)} />

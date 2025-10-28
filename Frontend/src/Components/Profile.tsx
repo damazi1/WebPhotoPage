@@ -6,22 +6,16 @@ import Zapisane from './Zapisane';
 function Profile() {
   const [flag, setFlag] = useState(true);
   const [profile, setProfile] = useState({
+    userId: '',
     name: '',
     email: '',
-    phone: '',
-    followers: 0,
-    avatar: '' // opcjonalnie
+    roles: '',
   });
 
   useEffect(() => {
-      const token = localStorage.getItem('jwt');
-      if (!token) return;
-    // przykładowy fetch danych użytkownika
-  fetch('http://localhost:8080/api/users/me', {
-    headers: {
-      'Authorization': 'Bearer ' + token
-    }
-  })
+    fetch("http://localhost:8080/user/me", {
+      credentials: 'include' // uwierzytelnianie ciasteczkami
+    })
     .then(res => res.json())
     .then(data => setProfile(data))
     .catch(err => console.error(err));
@@ -30,12 +24,12 @@ function Profile() {
   return (
     <div className='prof-main'>
       <label>
-        <img src={profile.avatar || 'avatar-default.webp'} alt="zdjęcie profilowe" />
+        <img src={'avatar-default.webp'} alt="zdjęcie profilowe" />
 
         <p>{profile.name}</p>
-        <p>Liczba obserwujących: {profile.followers}</p>
+        {/* <p>Liczba obserwujących: {profile.followers}</p> */}
         <p>Email: {profile.email}</p>
-        <p>Telefon: {profile.phone}</p>
+        {/* <p>Telefon: {profile.phone}</p> */}
       </label>
 
       <label>
