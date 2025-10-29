@@ -24,8 +24,8 @@ function Register() {
 
   return (
     <div className="Panel">
-      <p>Sign up</p>
-      <form onSubmit={submitRegister}>
+      <p>Rejestracja</p>
+      <form className="auth-card" onSubmit={submitRegister}>
         <label>
           Login:
           <input type="text" value={name} onChange={e => setName(e.target.value)} />

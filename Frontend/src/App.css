@@ -38,31 +38,57 @@
   transition: all 0.3s ease;
 }
 
-.navbar-app .User .Log-in:hover{
+.navbar-app .User .Log-in:hover,
+.navbar-app .User .Log-in:focus-visible{
   text-decoration: none;
-  color: black !important;
-  text-shadow: 1px 1px 1px lightgray;
-  transition: all 0.3s ease;
+  color: #f7fbff !important;
+  box-shadow: 0 12px 24px -18px rgba(22, 72, 197, 0.6);
+  transform: translateY(-1px);
 }
-.navbar-app .User .Sign-up:hover{
+.navbar-app .User .Log-out:hover,
+.navbar-app .User .Log-out:focus-visible{
   text-decoration: none;
-  color: gray !important;
-  text-shadow: 1px 1px 1px lightgray;
-  transition: all 0.3s ease;
+  color: #f9fbff !important;
+  box-shadow: 0 12px 28px -18px rgba(12, 54, 132, 0.6);
+  transform: translateY(-1px);
+}
+.navbar-app .User .Sign-up:hover,
+.navbar-app .User .Sign-up:focus-visible{
+  text-decoration: none;
+  color: #1d3f83 !important;
+  box-shadow: 0 10px 20px -16px rgba(35, 107, 202, 0.35);
+  transform: translateY(-1px);
 }
 .Log-in{
-  background-color: red;
-  color: white !important;
+  background: linear-gradient(135deg, #1c4fff, #3d8bff);
+  color: #f7fbff !important;
+  box-shadow: 0 12px 26px -18px rgba(16, 60, 170, 0.7);
+}
+
+.Log-out{
+  background: linear-gradient(135deg, #193b84, #2356c6);
+  color: #f9fbff !important;
+  box-shadow: 0 14px 30px -20px rgba(14, 55, 128, 0.7);
+  border: none;
 }
 
 .Sign-up{
-  color: black;
-  background-color: lightgrey;
+  color: #1d3f83;
+  background: linear-gradient(135deg, rgba(227, 239, 255, 0.95), rgba(202, 224, 255, 0.95));
+  border: 1px solid rgba(50, 107, 214, 0.15);
+  box-shadow: 0 10px 22px -18px rgba(31, 81, 180, 0.4);
 }
 .User a{
-  padding:17px;
-  border: 1px solid white;
-  border-radius: 20px;
+  padding: 0.95rem 1.85rem;
+  border: 1px solid transparent;
+  border-radius: 22px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.User button{
+  padding: 0.95rem 1.85rem;
+  border-radius: 22px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
 }
 .User{
   gap:10px;

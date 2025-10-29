@@ -1,42 +1,52 @@
-import {useState} from "react";
+import { type FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import handleLogin from "../Scripts/User/Login";
-import '../Styles/Register.css';
-
+import "../Styles/Register.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // hook do przekierowań
+  const navigate = useNavigate(); // hook do przekierowan
 
-    /**
-     * Tak powinny wyglądać odwołania mniej więcej
-     * możecie to poprawić według własnych potrzeb
-     * Polecam utworzyć wszystkie zapytania w osobnym pakiecie
-     * importować pakiet i tylko wywoływać metody żeby tu było mniej kodu
-     * Wszystko idzie po ciasteczkach więc wierze że dacie radę
-     * Ciasteczka są w przeglądarce pod F12 -> Application -> Cookies
-     * Serwer sam obsługuje ciasteczka więc nie trzeba ich ręcznie dodawać
-     * piszecie zapytanie i backend wszystko ogarnia
-     */
+  /**
+   * Tak powinny wygladac odwolania mniej wiecej
+   * mozecie to poprawic wedlug wlasnych potrzeb
+   * Polecam utworzyc wszystkie zapytania w osobnym pakiecie
+   * importowac pakiet i tylko wywolywac metody zeby tu bylo mniej kodu
+   * Wszystko idzie po ciasteczkach wiec wierze ze dacie rade
+   * Ciasteczka sa w przegladarce pod F12 -> Application -> Cookies
+   * Serwer sam obsluguje ciasteczka wiec nie trzeba ich recznie dodawac
+   * piszecie zapytanie i backend wszystko ogarnia
+   */
 
-  const submitLogin = async () => {
+  const submitLogin = async (e?: FormEvent) => {
+    e?.preventDefault();
     const result = await handleLogin(email, password);
     if (!result.success) alert(result.message);
   };
 
   return (
-    <div className="Panel" style={{margin:"200px"}}>
+    <div className="Panel">
       <p>Logowanie</p>
-      <label>
-        E-mail: <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
-      </label>
-      <label>
-        Hasło: <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
-      </label>
-      <label>
-        <button type="button" onClick={submitLogin}>Login</button>
-      </label>
+      <form className="auth-card" onSubmit={submitLogin}>
+        <label>
+          E-mail:
+          <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
+        </label>
+        <label>
+          Haslo:
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+        </label>
+        <button type="submit">Login</button>
+        <div className="auth-links">
+          <button type="button" className="auth-link" onClick={() => navigate("/Register")}>
+            Nie masz konta? Zarejestruj sie
+          </button>
+          <button type="button" className="auth-link auth-link--ghost">
+            Zapomniales haslo?
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -35,7 +35,7 @@ function logout() {
           {isLoggedIn}
           { localStorage.getItem("isLoggedIn")=="false" &&<Link className='Log-in' to="/Login">Logowanie</Link>}
           { localStorage.getItem("isLoggedIn")=="false" &&<Link className='Sign-up' to="/Register">Rejestracja</Link>}
-          { localStorage.getItem("isLoggedIn")=="true" && <button className='Log-in' onClick={()=>logout()}>Wyloguj</button>}
+          { localStorage.getItem("isLoggedIn")=="true" && <button className='Log-out' onClick={()=>logout()}>Wyloguj</button>}
         </div>
       </nav>
 
