@@ -21,8 +21,9 @@ public class Post {
     @Column(name = "Description")
     private String description;
 
-    @Column(name = "Photo", nullable = false)
-    private String photo;
+    @ManyToOne
+    @JoinColumn(name = "photo_id", nullable = false)
+    private Photo photo;
 
     @Column(name = "Post_creation_date", nullable = false)
     private LocalDate postCreationDate;

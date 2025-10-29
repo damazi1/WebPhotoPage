@@ -6,6 +6,8 @@ import { fetchFollowersCount } from "../Scripts/User/Followers";
 import { fetchFollowingCount } from "../Scripts/User/Following";
 import { fetchUserLogged } from "../Scripts/User/LoggedUser";
 
+import { fetchUserAvatar, uploadUserAvatar } from '../Scripts/User/Photo';
+
 interface User {
   userId: number;
   name: string;
@@ -18,17 +20,8 @@ function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [followersCount, setFollowersCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
+  const [avatar, setAvatar] = useState<string>('/avatar-default.webp');
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const data = await fetchUserLogged();
-      if (data) {
-        setUser(data);
-        await refreshFollowCounts(data.userId);
-      }
-    };
-    loadUser();
-  }, []);
 
   const refreshFollowCounts = async (userId?: number) => {
     if (!userId) return;
@@ -36,6 +29,28 @@ function Profile() {
     const following = await fetchFollowingCount(userId.toString());
     setFollowersCount(followers);
     setFollowingCount(following);
+  };
+  useEffect(() => {
+    const loadUser = async () => {
+      const data = await fetchUserLogged();
+      if (data) {
+        setUser(data);
+        const avatarPath = await fetchUserAvatar(data.userId);
+        setAvatar(avatarPath);
+        await refreshFollowCounts(data.userId);
+      }
+    };
+    loadUser();
+  }, []);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+    const file = e.target.files[0];
+    const success = await uploadUserAvatar(file);
+    if (success && user) {
+      const avatarPath = await fetchUserAvatar(user.userId);
+      setAvatar(avatarPath);
+    }
   };
 
   if (!user) {
@@ -51,10 +66,11 @@ function Profile() {
       <div className="profile-card">
         <header className="profile-header">
           <img
-            src="avatar-default.webp"
+            src={avatar? avatar : '/avatar-default.webp'}
             alt="Zdjecie profilowe"
             className="profile-avatar"
           />
+          <input type="file" accept="image/*" onChange={handleAvatarChange} />
           <div className="profile-info">
             <h1>{user.name}</h1>
             <p className="profile-email">{user.email}</p>

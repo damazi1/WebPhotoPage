@@ -1,5 +1,6 @@
 package com.example.photopage.service;
 
+import com.example.photopage.model.Photo;
 import com.example.photopage.model.User;
 import com.example.photopage.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,11 @@ public class UserService {
     public Optional<User> findById(Integer id) {
         return userRepository.findById(id);
     }
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+    public Photo getUserAvatar(Integer userId) {
+        return userRepository.findAvatarByUserId(userId);
+    }
+
 }

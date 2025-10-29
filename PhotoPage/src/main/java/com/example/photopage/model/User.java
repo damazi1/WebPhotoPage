@@ -33,6 +33,9 @@ public class User implements UserDetails {
     private String password;
     @Column(name = "roles", nullable = false)
     private String roles;
+    @ManyToOne
+    @JoinColumn(name = "avatar_id")
+    private Photo avatar;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

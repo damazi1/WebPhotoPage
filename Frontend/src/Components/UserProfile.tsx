@@ -7,6 +7,7 @@ import { fetchFollowingCount } from "../Scripts/User/Following";
 import { fetchUserProfile } from "../Scripts/User/UserProfile";
 import { followUser } from "../Scripts/User/FollowUser";
 import { fetchUserLogged } from "../Scripts/User/LoggedUser";
+import { fetchUserAvatar } from '../Scripts/User/Photo';
 
 interface User {
   userId: number;
@@ -21,7 +22,7 @@ function UserProfile() {
   const [flag, setFlag] = useState(true);
   const [followersCount, setFollowersCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
-
+  const [avatar, setAvatar] = useState<string>('/avatar-default.webp');
 
 
    const refreshFollowCounts = async () => {
@@ -34,12 +35,16 @@ function UserProfile() {
   useEffect(() => {
     if (!id) return;
 
-  const loadUser = async () => {
+    const loadUser = async () => {
       const data = await fetchUserProfile(id);
-      if (data) setUser(data);
+      if (data) {
+        setUser(data);
+        const avatarPath = await fetchUserAvatar(data.userId);
+        setAvatar(avatarPath);
+      }
       await refreshFollowCounts();
-    }
-      loadUser();
+    };
+    loadUser();
   }, [id]);
 
   const handleFollowClick = async () => {
@@ -59,7 +64,7 @@ function UserProfile() {
   return (
     <div className='prof-main'>
       <label>
-        <img src={'/avatar-default.webp'} alt="zdjęcie profilowe" />
+        <img src={avatar ? avatar : '/avatar-default.webp'} alt="zdjęcie profilowe" style={{ width: 100, height: 100, borderRadius: '50%' }}/>
         <p>{user.name}</p>
         <p>Email: {user.email}</p>
       </label>
