@@ -53,6 +53,7 @@ public class UserController {
         List<User> users = userService.allUsers();
         return ResponseEntity.ok(users);
     }
+
     @GetMapping("/{id:\\d+}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return userService.findById(id)

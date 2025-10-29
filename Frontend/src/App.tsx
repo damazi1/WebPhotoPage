@@ -12,6 +12,7 @@ import PrivateRoute from './Scripts/PrivateRoute';
 import UserProfile from './Components/UserProfile';
 import { fetchUserLogout } from './Scripts/User/Logout';
 import { fetchUserLogged } from './Scripts/User/LoggedUser';
+import Posts from "./Components/Posts.tsx";
 
 function App() {
  const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,6 +44,7 @@ function App() {
           <Link to="/Information">Informacje</Link>
           <Link to="/Profile">Profile</Link>
           <Link to="/UserList">Users</Link>
+            <Link to={"/Posts"}>Add Post</Link>
         </div>
         <span style={{ width: "30vw" }}></span>
         <div className='User'>
@@ -51,7 +53,6 @@ function App() {
           { isLoggedIn && <button className='Log-out' onClick={logout}>Wyloguj</button>}
         </div>
       </nav>
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Explore" element={<Explore />} />
@@ -66,6 +67,7 @@ function App() {
         <Route path="/user/:id" element={<UserProfile />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
+          <Route path="/Posts" element={<Posts />} />
       </Routes>
     </div>
   )

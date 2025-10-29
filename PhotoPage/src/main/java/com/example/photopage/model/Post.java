@@ -2,6 +2,8 @@ package com.example.photopage.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Accessors(chain = true)
 public class Post {
 
     @Id
@@ -21,7 +24,7 @@ public class Post {
     @Column(name = "Description")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "photo_id", nullable = false)
     private Photo photo;
 

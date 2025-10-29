@@ -17,10 +17,9 @@ public class PhotoService {
 
     private final PhotoRepository photoRepository;
 
-    private final String uploadDir = "uploads/";
-
     public String savePhoto(MultipartFile file) throws IOException {
 
+        String uploadDir = "uploads/";
         Files.createDirectories(Path.of(uploadDir));
 
         String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
