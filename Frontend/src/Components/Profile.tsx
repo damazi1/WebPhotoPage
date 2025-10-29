@@ -5,6 +5,7 @@ import Zapisane from "./Zapisane";
 import { fetchFollowersCount } from "../Scripts/User/Followers";
 import { fetchFollowingCount } from "../Scripts/User/Following";
 import { fetchUserLogged } from "../Scripts/User/LoggedUser";
+import { useRef } from "react";
 
 import { fetchUserAvatar, uploadUserAvatar } from '../Scripts/User/Photo';
 
@@ -53,6 +54,11 @@ function Profile() {
     }
   };
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
   if (!user) {
     return (
       <section className="profile-section">
@@ -65,12 +71,20 @@ function Profile() {
     <section className="profile-section">
       <div className="profile-card">
         <header className="profile-header">
-          <img
-            src={avatar? avatar : '/avatar-default.webp'}
-            alt="Zdjecie profilowe"
-            className="profile-avatar"
-          />
-          <input type="file" accept="image/*" onChange={handleAvatarChange} />
+        <img
+          src={avatar ? avatar : '/avatar-default.webp'}
+          alt="Zdjęcie profilowe"
+          className="profile-avatar"
+          style={{ cursor: 'pointer' }}
+          onClick={handleAvatarClick}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarChange}
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+        />
           <div className="profile-info">
             <h1>{user.name}</h1>
             <p className="profile-email">{user.email}</p>
