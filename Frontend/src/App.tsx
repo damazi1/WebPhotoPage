@@ -7,18 +7,32 @@ import Explore from './Components/Explore';
 import Profile from './Components/Profile';
 import UserList from './Components/UserList';
 import { Routes, Route, Link } from "react-router-dom";
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import PrivateRoute from './Scripts/PrivateRoute';
 import UserProfile from './Components/UserProfile';
+import { fetchUserLogout } from './Scripts/User/Logout';
+import { fetchUserLogged } from './Scripts/User/LoggedUser';
 
 function App() {
-const [isLoggedIn, setIsLoggedIn] = useState(false);
+ const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-function logout() {
-  setIsLoggedIn(false)
-  window.location.href = "/";
-  localStorage.setItem("isLoggedIn","false")
-}
+  useEffect(() => {
+    const checkLogin = async () => {
+      const user = await fetchUserLogged();
+      setIsLoggedIn(!!user);
+    };
+    checkLogin();
+  }, []);
+
+  const logout = async () => {
+    try {
+      await fetchUserLogout(); // czekamy aż backend "wyloguje"
+      setIsLoggedIn(false);     // aktualizujemy UI
+    } catch (err) {
+      console.error("Błąd podczas wylogowania", err);
+    }
+  };
+  
   return (
     <div>
       <nav className='navbar-app'>
@@ -32,10 +46,9 @@ function logout() {
         </div>
         <span style={{ width: "30vw" }}></span>
         <div className='User'>
-          {isLoggedIn}
-          { localStorage.getItem("isLoggedIn")=="false" &&<Link className='Log-in' to="/Login">Logowanie</Link>}
-          { localStorage.getItem("isLoggedIn")=="false" &&<Link className='Sign-up' to="/Register">Rejestracja</Link>}
-          { localStorage.getItem("isLoggedIn")=="true" && <button className='Log-out' onClick={()=>logout()}>Wyloguj</button>}
+          { !isLoggedIn &&<Link className='Log-in' to="/Login">Logowanie</Link>}
+          { !isLoggedIn &&<Link className='Sign-up' to="/Register">Rejestracja</Link>}
+          { isLoggedIn && <button className='Log-out' onClick={logout}>Wyloguj</button>}
         </div>
       </nav>
 

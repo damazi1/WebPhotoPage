@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import axios from "axios";
 import type { ReactNode } from "react";
+import { fetchUserLogged, type User } from "../Scripts/User/LoggedUser";
 
 interface PrivateRouteProps {
   children: ReactNode;
@@ -9,25 +9,13 @@ interface PrivateRouteProps {
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/user/me", {
-          withCredentials: true,
-        });
-
-        if (response.status === 200) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (err) {
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
-      }
+      const loggedUser = await fetchUserLogged();
+      setUser(loggedUser);
+      setIsLoading(false);
     };
 
     checkAuth();
@@ -37,7 +25,8 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
     return <p>Ładowanie...</p>;
   }
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/Login" replace />;
+  // jeżeli user istnieje, renderujemy children, w przeciwnym wypadku przekierowujemy
+  return user ? <>{children}</> : <Navigate to="/Login" replace />;
 };
 
 export default PrivateRoute;

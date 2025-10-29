@@ -5,7 +5,11 @@ import com.example.photopage.model.Photo;
 import com.example.photopage.model.User;
 import com.example.photopage.service.PhotoService;
 import com.example.photopage.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.SameSiteCookies;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +28,19 @@ public class UserController {
     private final UserService userService;
     private final PhotoService photoService;
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false) // takie samo jak w login
+                .path("/")
+                .maxAge(0) // usuwa cookie
+                .sameSite(SameSiteCookies.STRICT.toString()) // takie samo jak w login
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().build();
+    }
     @GetMapping("/me")
     public ResponseEntity<User> authenticatedUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -36,7 +53,7 @@ public class UserController {
         List<User> users = userService.allUsers();
         return ResponseEntity.ok(users);
     }
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return userService.findById(id)
                 .map(ResponseEntity::ok)
