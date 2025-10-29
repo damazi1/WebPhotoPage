@@ -31,7 +31,7 @@ public class AuthenticationService {
                 .setName(registerRequest.getName())
                 .setEmail(registerRequest.getEmail())
                 .setPassword(passwordEncoder.encode(registerRequest.getPassword()))
-                .setRoles(registerRequest.getRoles())
+                .setRoles("USER")
                 .setAccountCreateDate(LocalDate.now());
         return userRepository.save(user);
     }

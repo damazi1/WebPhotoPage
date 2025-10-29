@@ -9,11 +9,11 @@ interface AuthResponse {
 
 
 // Funkcja rejestracji
-export const handleRegister = async (name: string, email: string, password: string, roles: string): Promise<AuthResponse> => {
+export const handleRegister = async (name: string, email: string, password: string): Promise<AuthResponse> => {
   try {
     const response = await axios.post(
       "http://localhost:8080/auth/register",
-      { name, email, password, roles },
+      { name, email, password},
       { headers: { "Content-Type": "application/json" }, withCredentials: true }
     );
 

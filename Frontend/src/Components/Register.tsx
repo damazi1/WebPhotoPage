@@ -8,12 +8,11 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [roles, setRoles] = useState("");
   const navigate = useNavigate(); // hook do przekierowań
 
   const submitRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await handleRegister(name, email, password, roles);
+    const result = await handleRegister(name, email, password);
 
     if (result.success) {
       navigate("/Login");
@@ -37,10 +36,6 @@ function Register() {
         <label>
           E-mail:
           <input type="email" value={email} onChange={e => setEmail(e.target.value)} />
-        </label>
-        <label>
-          Role:
-          <input type="text" value={roles} onChange={e => setRoles(e.target.value)} />
         </label>
         <button type="submit">Sign up</button>
       </form>
