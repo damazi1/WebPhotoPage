@@ -1,7 +1,7 @@
 import { useState } from "react";
 import '../Styles/Register.css';
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { handleRegister } from "../Scripts/User/Register";
 
 function Register() {
   const [name, setName] = useState("");
@@ -11,30 +11,21 @@ function Register() {
   const [roles, setRoles] = useState("");
   const navigate = useNavigate(); // hook do przekierowań
 
-    const handleRegister = async (e) => {
-    e.preventDefault(); 
-    try {
-        const response = await axios.post("http://localhost:8080/auth/register",
-            {name, email, password, roles},
-            {
-                headers: {'Content-Type': 'application/json'},
-                withCredentials: true
-            });
-        if (response.status === 200) {
-            navigate("/Login");
-            return {success: true, data: response.data};
-        }
-        return {success: false, message: response.data.message};
-    } catch (error) {
-      console.error("Błąd Rejestracji:", error);
-      setMessage("Rejestracja nie powiodła się!");
+  const submitRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await handleRegister(name, email, password, roles);
+
+    if (result.success) {
+      navigate("/Login");
+    } else {
+      setMessage(result.message || "Rejestracja nie powiodła się!");
     }
   };
 
   return (
     <div className="Panel">
       <p>Sign up</p>
-      <form onSubmit={handleRegister}>
+      <form onSubmit={submitRegister}>
         <label>
           Login:
           <input type="text" value={name} onChange={e => setName(e.target.value)} />

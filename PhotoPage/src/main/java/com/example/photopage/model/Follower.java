@@ -1,6 +1,7 @@
 package com.example.photopage.model;
 
 import jakarta.persistence.*;
+import jdk.jshell.Snippet;
 import lombok.*;
 
 @Entity
@@ -23,4 +24,5 @@ public class Follower {
     @MapsId("followedId")
     @JoinColumn(name = "Follow")
     private User followed;
+
 }

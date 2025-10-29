@@ -2,34 +2,52 @@ import { useState, useEffect } from 'react';
 import '../Styles/Profile.css';
 import Utworzone from './Utworzone';
 import Zapisane from './Zapisane';
-
+import { fetchFollowersCount } from "../Scripts/User/Followers";
+import { fetchFollowingCount } from "../Scripts/User/Following";
+import { fetchUserLogged } from "../Scripts/User/LoggedUser";
+interface User {
+  userId: number;
+  name: string;
+  email: string;
+  roles: string;
+}
 function Profile() {
   const [flag, setFlag] = useState(true);
-  const [profile, setProfile] = useState({
-    userId: '',
-    name: '',
-    email: '',
-    roles: '',
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [followersCount, setFollowersCount] = useState<number>(0);
+  const [followingCount, setFollowingCount] = useState<number>(0);
+
 
   useEffect(() => {
-    fetch("http://localhost:8080/user/me", {
-      credentials: 'include' // uwierzytelnianie ciasteczkami
-    })
-    .then(res => res.json())
-    .then(data => setProfile(data))
-    .catch(err => console.error(err));
-}, []);
+  const loadUser = async () =>{
+    const data = await fetchUserLogged()
+    if(data) {
+      setUser(data);
+      await refreshFollowCounts(data.userId);
+    }
+    
+  }
+    loadUser();
+  },[]);
+  
+  const refreshFollowCounts = async (userId?: number) => {
+    if (!userId) return;
+    const followers = await fetchFollowersCount(userId.toString());
+    const following = await fetchFollowingCount(userId.toString());
+    setFollowersCount(followers);
+    setFollowingCount(following);
+  };
 
+  if (!user) return <p>Ładowanie...</p>;
   return (
     <div className='prof-main'>
       <label>
         <img src={'avatar-default.webp'} alt="zdjęcie profilowe" />
 
-        <p>{profile.name}</p>
-        {/* <p>Liczba obserwujących: {profile.followers}</p> */}
-        <p>Email: {profile.email}</p>
-        {/* <p>Telefon: {profile.phone}</p> */}
+        <p>{user.name}</p>
+        <p>Email: {user.email}</p>
+        <p>Followers: {followersCount}</p>
+        <p>Following: {followingCount}</p>
       </label>
 
       <label>

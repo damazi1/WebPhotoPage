@@ -22,13 +22,24 @@ function UsersList() {
       .catch(err => console.error(err));
   }, []);
 
+  const [loggedUserId, setLoggedUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/user/me", { credentials: 'include' })
+      .then(res => res.json())
+      .then((data: User) => setLoggedUserId(data.userId))
+      .catch(err => console.error(err));
+  }, []);
+
+
+
   return (
     <div style={{margin:"150px"}}>
       <h2>Users</h2>
       <ul>
         {users.map(u => (
           <li key={u.userId}>
-            <Link to={`/user/${u.userId}`} style={{textDecoration: "none", color: "blue"}}>
+            <Link to={loggedUserId == u.userId ? '/Profile' : `/user/${u.userId}`} style={{textDecoration: "none", color: "blue"}}>
               <strong>{u.name}</strong>
             </Link> ({u.email}) - Role: {u.roles}
           </li>
