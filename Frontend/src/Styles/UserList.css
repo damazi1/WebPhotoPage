@@ -1,0 +1,253 @@
+.user-list {
+  margin: 120px auto 80px;
+  padding: 32px 40px;
+  max-width: 960px;
+  border-radius: 24px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  box-shadow: 0 20px 80px rgba(15, 23, 42, 0.08);
+}
+
+.user-list__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.user-list__eyebrow {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.user-list__title {
+  margin: 8px 0 4px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.user-list__subtitle {
+  margin: 0;
+  color: #475569;
+  font-size: 1rem;
+}
+
+.user-list__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.user-list__input {
+  flex: 1 1 240px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid #cbd5f5;
+  background: #f8fafc;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.user-list__input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.user-list__button {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-list__button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 15px 25px rgba(37, 99, 235, 0.2);
+}
+
+.user-list__button--ghost {
+  background: transparent;
+  color: #2563eb;
+  border: 1px dashed #2563eb;
+  box-shadow: none;
+}
+
+.user-list__status {
+  margin: 24px 0 0;
+  color: #475569;
+  font-weight: 500;
+}
+
+.user-list__status--error {
+  color: #dc2626;
+}
+
+.user-list__empty {
+  margin-top: 32px;
+  padding: 24px;
+  border-radius: 16px;
+  background: #fefce8;
+  border: 1px solid #facc15;
+  color: #854d0e;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-list__items {
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.user-card {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
+}
+
+.user-card__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.12);
+  display: grid;
+  place-items: center;
+}
+
+.user-card__avatar--image {
+  background: #e2e8f0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.user-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
+.user-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-card__heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.user-card__heading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #0f172a;
+}
+
+.user-card__badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(16, 185, 129, 0.15);
+  color: #047857;
+}
+
+.user-card__email {
+  margin: 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.user-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.user-card__roles {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-card__role {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.user-card__link {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid #1d4ed8;
+  color: #1d4ed8;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.user-card__link:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  .user-list {
+    padding: 24px;
+  }
+
+  .user-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-card__footer {
+    align-items: flex-start;
+  }
+}

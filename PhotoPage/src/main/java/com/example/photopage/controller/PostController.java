@@ -1,11 +1,15 @@
 package com.example.photopage.controller;
 
+import com.example.photopage.dto.PostsRequest;
 import com.example.photopage.model.Post;
 import com.example.photopage.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 import org.springframework.http.MediaType;
 
 @RequestMapping("/post")
@@ -26,4 +30,15 @@ public class PostController {
         Post deletedPost = postService.deletePost(id).orElse(null);
         return ResponseEntity.ok(deletedPost);
     }
+    @GetMapping("/my")
+public ResponseEntity<List<PostsRequest>> getMyPosts() {
+     List<PostsRequest> posts = postService.getMyPosts();
+    return ResponseEntity.ok(posts);
+}
+@GetMapping("/user/{userId}")
+public ResponseEntity<List<PostsRequest>> getPostsByUserId(@PathVariable Integer userId) {
+    List<PostsRequest> posts = postService.getPostsByUserId(userId);
+    return ResponseEntity.ok(posts);
+}
+
 }

@@ -313,3 +313,259 @@
         animation: none;
     }
 }
+/* Tło przyciemniające */
+.create-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.25s ease;
+}
+
+/* Okno modala */
+.create-modal {
+  margin-top:5vh;
+  background: #ffffff;
+  padding: 28px 32px;
+  border-radius: 18px;
+  width: 35vw;
+  max-width: 90%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  animation: scaleIn 0.25s ease;
+}
+
+/* Nagłówek */
+.create-modal h2 {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+/* Sekcja zdjęcia */
+.create-image-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 10px;
+  border: 2px dashed #ccc;
+  min-height: 200px;
+  max-height: 70vh; /* 🔹 zabezpieczenie: nigdy większe niż 70% wysokości okna */
+  overflow: hidden; /* ukryj nadmiar, jeśli coś się nie zmieści */
+  transition: border-color 0.2s ease;
+}
+
+.create-image-area:hover {
+  border-color: #999;
+}
+
+/* Gdy brak zdjęcia */
+.create-image-placeholder {
+  color: #777;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* 🔹 Podgląd zdjęcia – zachowuje proporcje, ale się skaluje */
+.create-image-preview {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 80%;
+  max-height: 35vh; /* 🔹 obraz nigdy nie większy niż 65% wysokości okna */
+  border-radius: 10px;
+  cursor: pointer;
+  object-fit: contain; /* zachowuje oryginalne proporcje */
+  background: #fff;
+}
+
+
+/* Pola formularza */
+.create-field {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.create-field label {
+  font-weight: 500;
+  color: #333;
+}
+
+.create-field input,
+.create-field textarea {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.create-field input:focus,
+.create-field textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Tagi */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-btn {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #f2f2f2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag-btn:hover {
+  background: #e6e6e6;
+}
+
+.tag-btn.active {
+  background: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+/* Przyciski na dole */
+.create-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.create-save {
+  background: #28a745;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.create-save:hover {
+  background: #23913e;
+}
+
+.create-cancel {
+  background: #ddd;
+  color: #333;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.create-cancel:hover {
+  background: #ccc;
+}
+
+/* Animacje */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.profile-empty {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.profile-empty h1 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.prof-main-utworzone {
+  background: #007bff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 24px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.prof-main-utworzone:hover {
+  background: #0069d9;
+}
+
+/* 🔹 Siatka postów */
+.masonry-grid {
+  display: flex;
+  margin-left: -16px; /* odstęp między kolumnami kompensowany */
+  width: auto;
+}
+
+.masonry-grid_column {
+  padding-left: 16px;
+  background-clip: padding-box;
+}
+
+.post-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
+}
+
+.post-card:hover {
+  transform: scale(1.02);
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.post-desc {
+  text-align: center;
+  font-weight: 500;
+  padding: 10px;
+  background-color: #f8f8f8;
+  color: black;
+}
