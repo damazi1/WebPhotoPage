@@ -1,7 +1,6 @@
 package com.example.photopage.model;
 
 import jakarta.persistence.*;
-import jdk.jshell.Snippet;
 import lombok.*;
 
 @Entity

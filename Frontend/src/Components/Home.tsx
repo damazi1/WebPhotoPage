@@ -71,8 +71,13 @@ const HERO_THEMES: HeroTheme[] = [
 const ROTATE_DELAY_MS = 6000;
 const FADE_START_MS = 5500; // <-- zaczynamy fade-out sekundę przed rotacją
 const FADE_DURATION_MS = ROTATE_DELAY_MS - FADE_START_MS; // = 1000 ms
-function Home() {
-    useScrollReveal();
+
+type HomeProps = {
+    isLoggedIn?: boolean;
+};
+
+function Home({ isLoggedIn = false }: HomeProps) {
+    useScrollReveal(0.8, isLoggedIn);
     const sectionClasses = useMemo(
         () => ["home-main", "home-main2", "home-main3", "home-main4", "home-main5"],
         []
@@ -81,6 +86,7 @@ function Home() {
 
     const [activeIdx, setActiveIdx] = useState(0);
     const [headlineVisible, setHeadlineVisible] = useState(true);
+    const [preFade, setPreFade] = useState(false);
 
     const rotateTimeoutRef = useRef<number | null>(null);
     const fadeTimeoutRef = useRef<number | null>(null);
@@ -95,7 +101,6 @@ function Home() {
             fadeTimeoutRef.current = null;
         }
     };
-    const [preFade, setPreFade] = useState(false);
     useEffect(() => {
         if (currentSection !== 0) {
             clearTimers();
@@ -238,17 +243,39 @@ function Home() {
             </div>
 
             <div className="home-main4">
-                <div className="register-form scroll-reveal">
-                    <h2>Zarejestruj się</h2>
-                    <p>Dołącz do naszej społeczności i zacznij tworzyć z nami!</p>
-                    <form>
-                        <input type="text" placeholder="Imię" required></input>
-                        <input type="email" placeholder="Adres e-mail" required></input>
-                        <input type="password" placeholder="Hasło" required></input>
-                        <button type="submit" className="register-btn">Zarejestruj się</button>
-                    </form>
-                </div>
-                
+                {isLoggedIn ? (
+                    <div className="home-main4-logged scroll-reveal">
+                        <div className="home-main4-logged__header">
+                            <h2>Wróć do swoich tablic</h2>
+                            <p>Ostatnio zapisywane pomysły i tablice, które możesz rozwinąć dalej.</p>
+                        </div>
+                        <div className="home-main4-logged__boards">
+                            <article>
+                                <span>Zapisane ostatnio</span>
+                                <p>Nowe moodboardy i przepisy, które zapisujesz od tygodnia.</p>
+                                <button type="button">Przejdź do zapisanych</button>
+                            </article>
+                            <article>
+                                <span>Ulubione tablice</span>
+                                <p>Najbardziej aktywne tablice społeczności Picnest.</p>
+                                <button type="button">Zobacz tablice</button>
+                            </article>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="home-main4-content scroll-reveal">
+                        <div className="register-form scroll-reveal">
+                            <h2>Zarejestruj się</h2>
+                            <p>Dołącz do społeczności Picnest, zapisuj pomysły i twórz tablice w kilka sekund.</p>
+                            <form>
+                                <input type="text" placeholder="Imię" required></input>
+                                <input type="email" placeholder="Adres e-mail" required></input>
+                                <input type="password" placeholder="Hasło" required></input>
+                                <button type="submit" className="register-btn">Zarejestruj się</button>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -6,6 +6,8 @@ import { fetchFollowersCount } from "../Scripts/User/Followers";
 import { fetchFollowingCount } from "../Scripts/User/Following";
 import { fetchUserLogged } from "../Scripts/User/LoggedUser";
 import { fetchUserAvatar, uploadUserAvatar } from "../Scripts/User/Photo";
+import { updateProfile } from "../Scripts/User/UpdateProfile";
+import { changePassword } from "../Scripts/User/ChangePassword";
 import { addPost } from "../Scripts/Post/AddPost";
 import type { FormEvent } from "react";
 
@@ -32,6 +34,18 @@ function Profile() {
   const [tags, setTags] = useState<string[]>([]);
 
   const [refreshPosts, setRefreshPosts] = useState(false);
+  const [shareMessage, setShareMessage] = useState("");
+  const [profileInfo, setProfileInfo] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editError, setEditError] = useState("");
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
 
   const availableTags = [
     "Kuchnia",
@@ -98,6 +112,114 @@ function Profile() {
     }
   };
 
+  const openEditModal = () => {
+    if (!user) return;
+    setEditName(user.name);
+    setEditEmail(user.email);
+    setEditError("");
+    setPasswordError("");
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setShowPasswordFields(false);
+    setShowEditModal(true);
+  };
+
+  const handleEditProfile = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    const trimmedName = editName.trim();
+    const trimmedEmail = editEmail.trim();
+    if (!trimmedName || !trimmedEmail) {
+      setEditError("Wszystkie pola są wymagane");
+      return;
+    }
+
+    const trimmedCurrent = currentPassword.trim();
+    const trimmedNew = newPassword.trim();
+    const trimmedConfirm = confirmPassword.trim();
+    const wantsPasswordChange =
+      trimmedCurrent.length > 0 ||
+      trimmedNew.length > 0 ||
+      trimmedConfirm.length > 0;
+
+    if (wantsPasswordChange) {
+      if (!trimmedCurrent || !trimmedNew || !trimmedConfirm) {
+        setPasswordError("Uzupełnij wszystkie pola hasła");
+        return;
+      }
+      if (trimmedNew.length < 8) {
+        setPasswordError("Hasło musi mieć co najmniej 8 znaków");
+        return;
+      }
+      if (trimmedNew !== trimmedConfirm) {
+        setPasswordError("Hasła nie są zgodne");
+        return;
+      }
+    }
+
+    try {
+      setIsSavingProfile(true);
+      setEditError("");
+      setPasswordError("");
+      const updated: User = await updateProfile({
+        name: trimmedName,
+        email: trimmedEmail,
+      });
+      setUser(updated);
+
+      if (wantsPasswordChange) {
+        await changePassword({
+          oldPassword: trimmedCurrent,
+          newPassword: trimmedNew,
+        });
+        setProfileInfo("Profil i hasło zostały zaktualizowane");
+      } else {
+        setProfileInfo("Profil został zaktualizowany");
+      }
+      setTimeout(() => setProfileInfo(""), 3000);
+      setShowEditModal(false);
+    } catch (err: any) {
+      const message =
+        err?.message ??
+        (wantsPasswordChange
+          ? "Nie udało się zaktualizować profilu lub hasła"
+          : "Nie udało się zaktualizować profilu");
+      setEditError(message);
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
+  const handleShareProfile = async () => {
+    if (!user) return;
+    const profileUrl = window.location.href;
+    try {
+      if ("share" in navigator && typeof (navigator as any).share === "function") {
+        await (navigator as any).share({
+          title: `${user.name} – profil`,
+          url: profileUrl,
+        });
+        setShareMessage("Profil udostępniony ✔");
+      } else if (
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(profileUrl);
+        setShareMessage("Link do profilu skopiowany");
+      } else {
+        setShareMessage("Twoja przeglądarka nie obsługuje udostępniania");
+      }
+    } catch (err) {
+      console.error("Błąd podczas udostępniania profilu:", err);
+      setShareMessage("Nie udało się udostępnić profilu");
+    }
+
+    setTimeout(() => setShareMessage(""), 2500);
+  };
+
+  
+
   // 🧩 Load user data
   const refreshFollowCounts = async (userId?: number) => {
     if (!userId) return;
@@ -155,11 +277,11 @@ function Profile() {
         <div className="profile-stats">
           <div className="profile-stat">
             <span className="profile-stat__value">{followersCount}</span>
-            <span className="profile-stat__label">Followers</span>
+            <span className="profile-stat__label">Obserwujący</span>
           </div>
           <div className="profile-stat">
             <span className="profile-stat__value">{followingCount}</span>
-            <span className="profile-stat__label">Following</span>
+            <span className="profile-stat__label">Obserwowani</span>
           </div>
           <div className="profile-stat">
             <span className="profile-stat__value">{user.roles}</span>
@@ -168,10 +290,14 @@ function Profile() {
         </div>
 
         <div className="profile-actions">
-          <button type="button" className="profile-button profile-button--ghost">
-            Udostępnij
+          <button
+            type="button"
+            className="profile-button profile-button--ghost"
+            onClick={handleShareProfile}
+          >
+            Udostępnij profil
           </button>
-          <button type="button" className="profile-button">
+          <button type="button" className="profile-button" onClick={openEditModal}>
             Edytuj profil
           </button>
           <button
@@ -182,6 +308,8 @@ function Profile() {
             ➕ Utwórz
           </button>
         </div>
+        {shareMessage && <p className="share-info">{shareMessage}</p>}
+        {profileInfo && <p className="share-info">{profileInfo}</p>}
 
         <div
           className="profile-tabs"
@@ -205,7 +333,11 @@ function Profile() {
       </div>
 
       <div className="profile-content">
-        {showCreated ? <Utworzone refreshTrigger={refreshPosts} /> : <Zapisane />}
+        {showCreated ? (
+          <Utworzone refreshTrigger={refreshPosts} />
+        ) : (
+          <Zapisane refreshTrigger={refreshPosts} isOwnProfile />
+        )}
       </div>
 
       {/* 🔹 Modal: Utwórz nowy post */}
@@ -290,6 +422,89 @@ function Profile() {
           </div>
         </div>
       )}
+
+      {/* 🔹 Modal: Edytuj profil */}
+      {showEditModal && (
+        <div
+          className="create-modal-overlay"
+          onClick={() => (!isSavingProfile ? setShowEditModal(false) : undefined)}
+        >
+          <div className="create-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Edytuj profil</h2>
+            <form onSubmit={handleEditProfile}>
+              <div className="create-field">
+                <label>Imię i nazwisko</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                />
+              </div>
+              <div className="create-field">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                />
+              </div>
+              <button
+                type="button"
+                className="create-cancel"
+                style={{ marginBottom: "12px" }}
+                onClick={() => setShowPasswordFields((prev) => !prev)}
+                disabled={isSavingProfile}
+              >
+                {showPasswordFields ? "Ukryj zmianę hasła" : "Zmień hasło"}
+              </button>
+              {showPasswordFields && (
+                <>
+                  <div className="create-field">
+                    <label>Aktualne hasło</label>
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="create-field">
+                    <label>Nowe hasło</label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="create-field">
+                    <label>Powtórz nowe hasło</label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+              {editError && <p className="form-error">{editError}</p>}
+              {passwordError && <p className="form-error">{passwordError}</p>}
+              <div className="create-buttons">
+                <button
+                  type="button"
+                  className="create-cancel"
+                  onClick={() => (!isSavingProfile ? setShowEditModal(false) : undefined)}
+                  disabled={isSavingProfile}
+                >
+                  Anuluj
+                </button>
+                <button type="submit" className="create-save" disabled={isSavingProfile}>
+                  {isSavingProfile ? "Zapisywanie..." : "Zapisz"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </section>
   );
 }

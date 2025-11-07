@@ -38,23 +38,22 @@ function App() {
     <div>
       <nav className='navbar-app'>
         <div className='Main'>
-          <img src='main/logo.png'></img>
-          <Link to="/">Main</Link>
-          <Link to="/Explore">Explore</Link>
-          <Link to="/Information">Informacje</Link>
-          <Link to="/Profile">Profile</Link>
-          <Link to="/UserList">Users</Link>
-            <Link to={"/Posts"}>Add Post</Link>
+          <img src='main/logo.png' alt="Picnest" />
+          <Link to="/">Strona główna</Link>
+          <Link to="/Explore">Odkrywaj</Link>
+          <Link to="/Information">O Picnest</Link>
+          <Link to="/Profile">Profil</Link>
+          <Link to="/UserList">Społeczność</Link>
         </div>
         <span style={{ width: "30vw" }}></span>
         <div className='User'>
-          { !isLoggedIn &&<Link className='Log-in' to="/Login">Logowanie</Link>}
-          { !isLoggedIn &&<Link className='Sign-up' to="/Register">Rejestracja</Link>}
-          { isLoggedIn && <button className='Log-out' onClick={logout}>Wyloguj</button>}
+          {!isLoggedIn && <Link className='Log-in' to="/Login">Logowanie</Link>}
+          {!isLoggedIn && <Link className='Sign-up' to="/Register">Rejestracja</Link>}
+          {isLoggedIn && <button className='Log-out' onClick={logout}>Wyloguj</button>}
         </div>
       </nav>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
         <Route path="/Explore" element={<Explore />} />
         <Route path="/Information" element={<Informacje />} />
                 {/* Chronione trasy */}

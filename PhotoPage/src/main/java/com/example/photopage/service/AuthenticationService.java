@@ -46,4 +46,10 @@ public class AuthenticationService {
                 .orElseThrow();
     }
 
+    public void requestPasswordReset(String email) {
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono użytkownika o podanym adresie"));
+        // Tu można dodać logikę wysyłki maila z linkiem resetującym
+    }
+
 }

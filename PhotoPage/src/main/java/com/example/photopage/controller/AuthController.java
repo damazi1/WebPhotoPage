@@ -4,6 +4,7 @@ import com.example.photopage.service.JwtService;
 import com.example.photopage.dto.LoginResponse;
 import com.example.photopage.dto.LoginRequest;
 import com.example.photopage.dto.RegisterRequest;
+import com.example.photopage.dto.ForgotPasswordRequest;
 import com.example.photopage.model.User;
 import com.example.photopage.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,5 +49,15 @@ public class AuthController {
                 .setExpiresIn(jwtService.getExpirationTime());
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        try {
+            authenticationService.requestPasswordReset(request.email());
+            return ResponseEntity.ok("Jeśli konto istnieje, wysłaliśmy instrukcję resetu hasła");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

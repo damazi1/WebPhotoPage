@@ -1,6 +1,7 @@
 package com.example.photopage.controller;
 
-import com.example.photopage.dto.UserDetails;
+import com.example.photopage.dto.ChangePasswordRequest;
+import com.example.photopage.dto.UpdateUserRequest;
 import com.example.photopage.model.Photo;
 import com.example.photopage.model.User;
 import com.example.photopage.service.PhotoService;
@@ -16,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +46,30 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         return ResponseEntity.ok(currentUser);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<?> updateAuthenticatedUser(@RequestBody UpdateUserRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        try {
+            User updated = userService.updateUser(currentUser, request);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        try {
+            userService.changePassword(currentUser, request);
+            return ResponseEntity.ok("Hasło zostało zmienione");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/")

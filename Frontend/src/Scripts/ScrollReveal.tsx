@@ -1,7 +1,7 @@
 /** Ujawnia elementy z klasą .scroll-reveal, gdy wchodzą w viewport */
 import { useEffect} from 'react';
 
-export function useScrollReveal(threshold: number = 0.8) {
+export function useScrollReveal(threshold: number = 0.8, refreshKey?: unknown) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -19,7 +19,7 @@ export function useScrollReveal(threshold: number = 0.8) {
     targets.forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
-  }, [threshold]);
+  }, [threshold, refreshKey]);
 }
 
 export default useScrollReveal;

@@ -170,6 +170,50 @@
     font-size: 0.9rem;
 }
 
+.forgot-panel {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.forgot-panel form {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.forgot-panel input {
+    flex: 1;
+    border-radius: 12px;
+    border: none;
+    padding: 0.65rem 0.8rem;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.forgot-panel button {
+    border-radius: 999px;
+    border: none;
+    padding: 0.55rem 1.4rem;
+    background: linear-gradient(100deg, rgba(41, 101, 255, 0.98), rgba(96, 197, 255, 0.95));
+    color: #fff;
+    cursor: pointer;
+}
+
+.form-error {
+    color: #ffadb2;
+    font-size: 0.85rem;
+}
+
+.form-success {
+    color: #bdf9d1;
+    font-size: 0.85rem;
+}
+
 .Panel > p:last-of-type:not(:first-of-type) {
     margin: 0;
     padding: 0.85rem 1.25rem;

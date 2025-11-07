@@ -92,11 +92,11 @@ function UserProfile() {
         <div className="profile-stats">
           <div className="profile-stat">
             <span className="profile-stat__value">{followersCount}</span>
-            <span className="profile-stat__label">Followers</span>
+            <span className="profile-stat__label">Obserwujący</span>
           </div>
           <div className="profile-stat">
             <span className="profile-stat__value">{followingCount}</span>
-            <span className="profile-stat__label">Following</span>
+            <span className="profile-stat__label">Obserwowani</span>
           </div>
           <div className="profile-stat">
             <span className="profile-stat__value">{user.roles}</span>
@@ -139,7 +139,11 @@ function UserProfile() {
       </div>
 
       <div className="profile-content">
-        {showCreated ? <Utworzone userId={Number(id)} /> : <Zapisane />}
+        {showCreated ? (
+          <Utworzone userId={Number(id)} />
+        ) : (
+          <Zapisane userId={Number(id)} />
+        )}
       </div>
 
     </section>
