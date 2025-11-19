@@ -7,6 +7,7 @@ import com.example.photopage.model.User;
 import com.example.photopage.service.PhotoService;
 import com.example.photopage.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.SameSiteCookies;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;

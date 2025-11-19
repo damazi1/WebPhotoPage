@@ -4,6 +4,7 @@ import com.example.photopage.model.Photo;
 import com.example.photopage.model.User;
 import com.example.photopage.service.PhotoService;
 import com.example.photopage.service.UserService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,7 @@ import java.nio.file.Path;
 import java.security.Principal;
 import java.util.Map;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RestController
 @RequestMapping("/photo")
 public class PhotoController {

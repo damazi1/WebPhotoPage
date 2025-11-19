@@ -19,7 +19,7 @@ public class PhotoService {
 
     public String savePhoto(MultipartFile file) throws IOException {
 
-        String uploadDir = "uploads/";
+        String uploadDir = "../uploads/";
         Files.createDirectories(Path.of(uploadDir));
 
         String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -29,7 +29,7 @@ public class PhotoService {
         Files.copy(file.getInputStream(), filePath);
 
         // Zwracamy ścieżkę względną dla frontendu
-        return "/uploads/" + filename;
+        return uploadDir + filename;
     }
 
     public Photo createPhotoRecord(String path) {

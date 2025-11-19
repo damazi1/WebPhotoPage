@@ -4,6 +4,7 @@ import com.example.photopage.dto.LoginRequest;
 import com.example.photopage.dto.RegisterRequest;
 import com.example.photopage.model.User;
 import com.example.photopage.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,20 +13,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
+@AllArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationService(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager
-    ) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-    }
     public User signup(RegisterRequest registerRequest) {
         User user = new User()
                 .setName(registerRequest.getName())

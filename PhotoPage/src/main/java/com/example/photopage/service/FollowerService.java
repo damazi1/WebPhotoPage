@@ -5,11 +5,12 @@ import com.example.photopage.model.FollowerId;
 import com.example.photopage.model.User;
 import com.example.photopage.repository.FollowerRepository;
 import com.example.photopage.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class FollowerService {
 
     private final FollowerRepository followerService;

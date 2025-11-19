@@ -1,6 +1,7 @@
 package com.example.photopage.config;
 
 import com.example.photopage.filter.JwtAuthenticationFilter;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,17 +20,10 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(
-            AuthenticationProvider authenticationProvider,
-            JwtAuthenticationFilter jwtAuthenticationFilter
-    ) {
-        this.authenticationProvider = authenticationProvider;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

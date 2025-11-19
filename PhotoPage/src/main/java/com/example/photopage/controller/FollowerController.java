@@ -1,19 +1,16 @@
 package com.example.photopage.controller;
 
 import com.example.photopage.service.FollowerService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 @RestController
 @RequestMapping("/follow")
+@AllArgsConstructor
 public class FollowerController {
     private final FollowerService followerService;
-
-    public FollowerController(FollowerService followerService) {
-        this.followerService = followerService;
-    }
-
 
     @GetMapping("/followers/{id}")
     public ResponseEntity<?> getFollowersCount(@PathVariable Integer id) {

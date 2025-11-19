@@ -11,7 +11,14 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String absolutePath = Path.of("uploads").toAbsolutePath().toUri().toString();
+        Path projectRoot = Path.of(System.getProperty("user.dir"));
+        // Jeśli jesteś w podkatalogu (np. PhotoPage), przejdź poziom wyżej
+        if (projectRoot.endsWith("PhotoPage")) {
+            projectRoot = projectRoot.getParent();
+        }
+        Path uploadsPath = projectRoot.resolve("uploads");
+        String absolutePath = uploadsPath.toAbsolutePath().toUri().toString();
+
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations(absolutePath);
     }
