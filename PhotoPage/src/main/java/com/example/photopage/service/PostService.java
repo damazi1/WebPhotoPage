@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -180,5 +181,18 @@ public class PostService {
         commentRepository.delete(comment);
     }
 
+    public List<PostsRequest> getAllPosts() {
+        return postRepository.findAll().stream()
+                .sorted((p1, p2) -> p2.getPostCreationDate().compareTo(p1.getPostCreationDate())) // Sortowanie: najnowsze na górze
+                .limit(50) // Limit 50 postów
+                .map(post -> new PostsRequest(
+                        // Tutaj wpisujemy pola w takiej kolejności, w jakiej masz je w konstruktorze PostsRequest
+                        post.getId(),
+                        post.getDescription(),
+                        post.getPhoto().getUrl(), // UWAGA: Sprawdź w klasie Photo, czy metoda nazywa się getPath(), getUrl() czy np. getFileName()
+                        post.getPostCreationDate()
+                ))
+                .collect(Collectors.toList());
+    }
 }
 

@@ -1,73 +1,183 @@
+import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
+import { createPortal } from "react-dom";
+import Masonry from "react-masonry-css";
 import "../Styles/Explore.css";
+// Importujemy style profilu, bo tam są definicje modala (.fullscreen-modal itp.)
+// Jeśli masz je w innym pliku, zmień ten import
+import "../Styles/Profile.css"; 
 
-const trendingPins = [
-  {
-    title: "Ciepłe, minimalistyczne kuchnie",
-    description: "Jasne drewno, wyspa z kamienia i odważne oświetlenie. Zapisane już ponad 2 300 razy.",
-    tags: ["wnętrza", "minimalizm"],
-    image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=60",
-  },
-  {
-    title: "City break w formie kolażu",
-    description: "Kolorowe moodboardy pomagają zaplanować weekend w Barcelonie lub Porto.",
-    tags: ["podróże", "kolaż"],
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=60",
-  },
-  {
-    title: "Roślinne salony",
-    description: "Domowe dżungle w stylu japandi to najchętniej zapisywane pomysły tej jesieni.",
-    tags: ["home decor"],
-    image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=60",
-  },
-  {
-    title: "Stylizacje core-kolor",
-    description: "Pastelowe zestawy Picnestowych stylistek biją rekordy zapisów wśród Gen Z.",
-    tags: ["moda", "pastel"],
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=60",
-  },
-];
+import { fetchAllPosts } from "../Scripts/Post/FetchAllPosts";
+import { fetchUserLogged } from "../Scripts/User/LoggedUser";
+import { toggleLike } from "../Scripts/Post/LikePost";
+import { fetchLikes } from "../Scripts/Post/FetchLikes";
+import { fetchLikeStatus } from "../Scripts/Post/LikeStatus";
+import {
+  fetchComments,
+  addComment,
+  deleteComment,
+  type PostComment,
+} from "../Scripts/Post/Comments";
 
-const exploreCategories = [
-  { title: "Wnętrza", description: "Kuchnie, salony, makiety do DIY", accent: "#f8b500" },
-  { title: "Moda", description: "Lookbooki, kapsułowe szafy, core-trendy", accent: "#ff7eb6" },
-  { title: "Jedzenie", description: "Proste kolacje, meal-prep i fit słodkości", accent: "#75d6b0" },
-  { title: "Podróże", description: "City breaki, mapy bucket list, przewodniki", accent: "#7bb5ff" },
-  { title: "Wellness", description: "Poranne rutyny, journaling, self-care", accent: "#c493ff" },
-];
+// Definicja interfejsu zgodna z backendem
+interface Post {
+  id: number;
+  description: string;
+  imageUrl: string;
+  postCreationDate: string;
+}
 
-const freshStories = [
-  {
-    title: "Planner Picnest: zimowe inspiracje",
-    description: "Gotowe szablony tablic pomagają zaplanować prezenty i wystroje świąteczne.",
-    image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=60",
-  },
-  {
-    title: "Raport trendów Picnest 2025",
-    description: "Analizujemy, które motywy zapisują pokolenia Z i Alpha – oraz jak wykorzystać je w marce.",
-    image: "https://images.unsplash.com/photo-1472289065668-ce650ac443d2?auto=format&fit=crop&w=900&q=60",
-  },
-  {
-    title: "Zapisane do wydruku",
-    description: "Nowa funkcja pozwala eksportować ulubione tablice do PDF-ów i moodboardów offline.",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=60",
-  },
-  {
-    title: "Kreator AI Moodboard",
-    description: "Połącz swoje zdjęcia z biblioteką Picnest AI i wygeneruj moodboard w 30 sekund.",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=60",
-  },
-];
+
 
 function Explore() {
+  // --- STATE GŁÓWNY ---
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // --- STATE MODALA (Skopiowany z Utworzone.tsx) ---
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [likes, setLikes] = useState(0);
+  const [comments, setComments] = useState<PostComment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [hasLiked, setHasLiked] = useState(false);
+  const [shareInfo, setShareInfo] = useState("");
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+
+  const breakpointColumns = {
+    default: 4,
+    1600: 3,
+    1100: 2,
+    700: 1,
+  };
+
+  // 1. Pobieranie postów
+  useEffect(() => {
+    const loadPosts = async () => {
+      const data = await fetchAllPosts();
+      setPosts(data);
+      setLoading(false);
+    };
+    loadPosts();
+  }, []);
+
+  // 2. Pobieranie zalogowanego usera (do usuwania komentarzy)
+  useEffect(() => {
+    const loadCurrentUser = async () => {
+      const user = await fetchUserLogged();
+      if (user) {
+        setCurrentUserEmail(user.email);
+      }
+    };
+    loadCurrentUser();
+  }, []);
+
+  // --- FUNKCJE OBSŁUGI MODALA ---
+
+  const openPost = async (post: Post) => {
+    setSelectedPost(post);
+    setLikes(0);
+    setComments([]);
+    setHasLiked(false);
+    setShareInfo("");
+
+    try {
+      // Pobieramy szczegóły równolegle
+      const [likesCount, commentsList, likedStatus] = await Promise.all([
+        fetchLikes(post.id),
+        fetchComments(post.id),
+        fetchLikeStatus(post.id),
+      ]);
+      setLikes(likesCount);
+      setComments(commentsList);
+      setHasLiked(likedStatus);
+    } catch (err) {
+      console.error("Błąd podczas ładowania szczegółów posta:", err);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedPost(null);
+    setLikes(0);
+    setComments([]);
+    setNewComment("");
+    setHasLiked(false);
+    setShareInfo("");
+  };
+
+  const handleLike = async () => {
+    if (!selectedPost) return;
+    try {
+      await toggleLike(selectedPost.id);
+      const [updatedLikes, likedStatus] = await Promise.all([
+        fetchLikes(selectedPost.id),
+        fetchLikeStatus(selectedPost.id),
+      ]);
+      setLikes(updatedLikes);
+      setHasLiked(likedStatus);
+    } catch (err) {
+      console.error("Błąd podczas dodawania polubienia:", err);
+    }
+  };
+
+  const handleAddComment = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedPost) return;
+    const trimmed = newComment.trim();
+    if (!trimmed) return;
+
+    try {
+      await addComment(selectedPost.id, trimmed);
+      const updatedComments = await fetchComments(selectedPost.id);
+      setComments(updatedComments);
+      setNewComment("");
+    } catch (err) {
+      console.error("Błąd podczas dodawania komentarza:", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (!selectedPost) return;
+    try {
+      await deleteComment(selectedPost.id, commentId);
+      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+    } catch (err) {
+      console.error("Błąd podczas usuwania komentarza:", err);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!selectedPost) return;
+    const shareUrl = `http://localhost:8080${selectedPost.imageUrl}`;
+
+    try {
+      if ("share" in navigator && typeof (navigator as any).share === "function") {
+        await (navigator as any).share({
+          title: selectedPost.description,
+          url: shareUrl,
+        });
+        setShareInfo("Udostępniono ✔");
+      } else if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(shareUrl);
+        setShareInfo("Skopiowano link do schowka");
+        setTimeout(() => setShareInfo(""), 2500);
+      } else {
+        setShareInfo("Twoja przeglądarka nie wspiera udostępniania");
+      }
+    } catch (err) {
+      console.error("Nie udało się udostępnić posta:", err);
+      setShareInfo("Błąd podczas udostępniania");
+    }
+  };
+
+  // --- RENDEROWANIE ---
+
   return (
     <div className="explore-page">
+      {/* Hero Section */}
       <section className="explore-hero">
         <div className="explore-hero__content">
           <h1>Odkrywaj Picnest</h1>
-          <p>
-            Wszystko, co inspiruje do działania: projekty DIY, kapsułowe szafy, przepisy i przewodniki podróżnicze.
-            Zapisuj pomysły i twórz własne kolekcje w ciągu kilku sekund.
-          </p>
+          <p>Wszystko, co inspiruje do działania. Zapisuj pomysły i twórz własne kolekcje.</p>
           <div className="explore-search">
             <input
               className="explore-search__input"
@@ -81,85 +191,180 @@ function Explore() {
         </div>
       </section>
 
+      
+
+      {/* Dynamiczna Sekcja Postów */}
       <section className="explore-section">
         <header className="explore-section__header">
           <span className="explore-section__eyebrow">Na topie</span>
-          <h2>Najczęściej zapisywane tablice społeczności Picnest</h2>
-          <p className="explore-section__description">
-            Trendy aktualizujemy co kilka godzin. Zainspiruj się i dodaj je do swoich kolekcji.
-          </p>
+          <h2>Najnowsze inspiracje społeczności</h2>
         </header>
 
-        <div className="explore-grid explore-grid--featured">
-          {trendingPins.map((pin) => (
-            <article key={pin.title} className="explore-card" style={{ backgroundImage: `url(${pin.image})` }}>
-              <div className="explore-card__overlay" />
-              <div className="explore-card__content">
-                <h3>{pin.title}</h3>
-                <p>{pin.description}</p>
-                <div className="explore-card__tags">
-                  {pin.tags.map((tag) => (
-                    <span key={tag}>{tag}</span>
-                  ))}
+        {loading ? (
+          <div className="explore-loading">Ładowanie inspiracji...</div>
+        ) : posts.length > 0 ? (
+          <Masonry
+            breakpointCols={breakpointColumns}
+            className="masonry-grid"
+            columnClassName="masonry-grid_column"
+          >
+            {posts.map((post) => (
+              <article 
+                key={post.id} 
+                className="explore-masonry-card"
+                onClick={() => openPost(post)} // TUTAJ OTWIERAMY MODAL
+                style={{ cursor: "pointer" }}
+              >
+                <div className="explore-card-image-wrapper">
+                  <img
+                    src={`http://localhost:8080${post.imageUrl || ""}`}
+                    alt={post.description || "Post"}
+                    loading="lazy"
+                  />
+                  <div className="explore-card-overlay">
+                    <button 
+                        className="save-btn"
+                        onClick={(e) => {
+                            e.stopPropagation(); // Żeby nie otwierać modala przy kliknięciu Zapisz
+                            // Tutaj dodasz logikę zapisywania w przyszłości
+                            handleLike(); // Tymczasowo może działać jak like
+                        }}
+                    >
+                        Zapisz
+                    </button>
+                  </div>
+                </div>
+                {post.description && (
+                  <div className="explore-card-footer">
+                    <h4>{post.description}</h4>
+                  </div>
+                )}
+              </article>
+            ))}
+          </Masonry>
+        ) : (
+          <p className="explore-empty">Brak postów do wyświetlenia.</p>
+        )}
+      </section>
+
+      {/* --- MODAL (PORTAL) --- */}
+      {selectedPost &&
+        createPortal(
+          (
+            <div className="fullscreen-modal-overlay" onClick={closeModal}>
+              <div
+                className="fullscreen-modal"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className="modal-close" onClick={closeModal}>
+                  ✕
+                </button>
+
+                <div className="modal-image-section">
+                  <img
+                    src={`http://localhost:8080${selectedPost.imageUrl}`}
+                    alt={selectedPost.description}
+                    className="modal-large-image"
+                  />
+                </div>
+
+                <div className="modal-info-section">
+                  <h2>{selectedPost.description}</h2>
+                  <p className="modal-date">
+                    {new Date(selectedPost.postCreationDate).toLocaleDateString()}
+                  </p>
+
+                  <div className="modal-stats">
+                    <span>❤️ {likes}</span>
+                    <span>💬 {comments.length}</span>
+                  </div>
+
+                  <div className="modal-actions">
+                    <button
+                      onClick={handleLike}
+                      className={hasLiked ? "is-liked" : ""}
+                    >
+                      {hasLiked ? "❤️ Polubiono" : "♡ Polub"}
+                    </button>
+                    <button type="button" className="share-btn" onClick={handleShare}>
+                      ↗ Udostępnij
+                    </button>
+                  </div>
+                  {shareInfo && <p className="share-info">{shareInfo}</p>}
+
+                  <div className="comments-section">
+                    <h4>Komentarze</h4>
+                    {comments.length > 0 ? (
+                      comments.map((comment) => {
+                        const avatarUrl = comment.avatarUrl
+                          ? comment.avatarUrl.startsWith("http")
+                            ? comment.avatarUrl
+                            : `http://localhost:8080${comment.avatarUrl}`
+                          : null;
+                        const displayName = comment.authorName || comment.authorEmail;
+                        const initials = (displayName?.charAt(0) || "?").toUpperCase();
+                        const createdAt = comment.creationDate
+                          ? new Date(comment.creationDate).toLocaleDateString()
+                          : "";
+                        const canDelete =
+                          currentUserEmail &&
+                          comment.authorEmail &&
+                          comment.authorEmail === currentUserEmail;
+
+                        return (
+                          <div key={comment.id} className="comment-item">
+                            {avatarUrl ? (
+                              <img
+                                src={avatarUrl}
+                                alt={displayName}
+                                className="comment-avatar"
+                              />
+                            ) : (
+                              <div className="comment-avatar comment-avatar--fallback">
+                                {initials}
+                              </div>
+                            )}
+                            <div className="comment-body">
+                              <div className="comment-headline">
+                                <div className="comment-meta">
+                                  <span className="comment-author">{displayName}</span>
+                                  {createdAt && <span className="comment-date">{createdAt}</span>}
+                                </div>
+                                {canDelete && (
+                                  <button
+                                    type="button"
+                                    className="comment-delete"
+                                    onClick={() => handleDeleteComment(comment.id)}
+                                  >
+                                    Usuń
+                                  </button>
+                                )}
+                              </div>
+                              <p className="comment-text">{comment.content}</p>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="no-comments">Brak komentarzy.</p>
+                    )}
+
+                    <form onSubmit={handleAddComment} className="comment-form">
+                      <input
+                        type="text"
+                        placeholder="Dodaj komentarz..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                      />
+                      <button type="submit">➤</button>
+                    </form>
+                  </div>
                 </div>
               </div>
-            </article>
-          ))}
-        </div>
-
-        <button className="explore-see-more" type="button">
-          Zobacz wszystkie trendy
-        </button>
-      </section>
-
-      <section className="explore-section">
-        <header className="explore-section__header">
-          <span className="explore-section__eyebrow">Katalog</span>
-          <h2>Przeglądaj Picnest według nastroju</h2>
-          <p className="explore-section__description">
-            Kategorie łączymy z poradami ekspertów i gotowymi listami inspiracji.
-          </p>
-        </header>
-
-        <div className="explore-grid explore-grid--categories">
-          {exploreCategories.map((category) => (
-            <article
-              key={category.title}
-              className="explore-category"
-              style={{
-                background: `linear-gradient(135deg, ${category.accent} 0%, rgba(255,255,255,0.15) 100%)`,
-              }}
-            >
-              <h3>{category.title}</h3>
-              <p>{category.description}</p>
-              <button type="button">Otwórz kolekcję</button>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="explore-section">
-        <header className="explore-section__header">
-          <span className="explore-section__eyebrow">Nowe na Picnest</span>
-          <h2>Historie, które właśnie przygotowaliśmy</h2>
-          <p className="explore-section__description">
-            Co tydzień kuratorzy Picnest publikują raporty, plannery i listy zadań dla społeczności.
-          </p>
-        </header>
-
-        <div className="explore-grid explore-grid--stories">
-          {freshStories.map((story) => (
-            <article key={story.title} className="explore-story">
-              <img src={story.image} alt={story.title} loading="lazy" />
-              <div className="explore-story__content">
-                <h3>{story.title}</h3>
-                <p>{story.description}</p>
-                <button type="button">Przeczytaj</button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+            </div>
+          ),
+          document.body
+        )}
     </div>
   );
 }

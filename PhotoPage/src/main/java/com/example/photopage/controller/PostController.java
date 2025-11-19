@@ -80,5 +80,10 @@ public ResponseEntity<List<PostsRequest>> getMyPosts() {
         postService.deleteComment(postId, commentId);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/all")
+    public ResponseEntity<List<PostsRequest>> getAllPosts() {
+        List<PostsRequest> posts = postService.getAllPosts();
+        return ResponseEntity.ok(posts);
+    }
 
 }
