@@ -1,0 +1,52 @@
+.TH "com.example.photopage.controller.PostController" 3 "PinterestApp" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+com.example.photopage.controller.PostController
+.SH SYNOPSIS
+.br
+.PP
+.SS "Metody publiczne"
+
+.in +1c
+.ti -1c
+.RI "ResponseEntity< \fBPost\fP > \fBaddPost\fP ( @RequestPart('description') String description, @RequestPart('file') MultipartFile file)"
+.br
+.ti -1c
+.RI "ResponseEntity< \fBPost\fP > \fBdeletePost\fP (@PathVariable Integer id)"
+.br
+.ti -1c
+.RI "ResponseEntity< List< \fBPostsRequest\fP > > \fBgetMyPosts\fP ()"
+.br
+.ti -1c
+.RI "ResponseEntity< List< \fBPostsRequest\fP > > \fBgetPostsByUserId\fP (@PathVariable Integer userId)"
+.br
+.ti -1c
+.RI "ResponseEntity< Void > \fBtoggleLike\fP (@PathVariable Integer postId)"
+.br
+.ti -1c
+.RI "ResponseEntity< Integer > \fBgetLikes\fP (@PathVariable Integer postId)"
+.br
+.ti -1c
+.RI "ResponseEntity< Boolean > \fBhasLiked\fP (@PathVariable Integer postId)"
+.br
+.ti -1c
+.RI "ResponseEntity< List< \fBPostsRequest\fP > > \fBgetLikedPosts\fP ()"
+.br
+.ti -1c
+.RI "ResponseEntity< Void > \fBaddComment\fP (@PathVariable Integer postId, @RequestBody CommentRequest request)"
+.br
+.ti -1c
+.RI "ResponseEntity< List< CommentResponse > > \fBgetComments\fP (@PathVariable Integer postId)"
+.br
+.ti -1c
+.RI "ResponseEntity< Void > \fBdeleteComment\fP (@PathVariable Integer postId, @PathVariable Integer commentId)"
+.br
+.ti -1c
+.RI "ResponseEntity< List< \fBPostsRequest\fP > > \fBgetAllPosts\fP ()"
+.br
+.in -1c
+
+.SH "Autor"
+.PP 
+Wygenerowano automatycznie z kodu źródłowego programem Doxygen dla PinterestApp\&.

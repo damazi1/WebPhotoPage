@@ -1,0 +1,40 @@
+.TH "com.example.photopage.controller.UserController" 3 "PinterestApp" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+com.example.photopage.controller.UserController
+.SH SYNOPSIS
+.br
+.PP
+.SS "Metody publiczne"
+
+.in +1c
+.ti -1c
+.RI "ResponseEntity< Void > \fBlogout\fP (HttpServletResponse response)"
+.br
+.ti -1c
+.RI "ResponseEntity< \fBUser\fP > \fBauthenticatedUser\fP ()"
+.br
+.ti -1c
+.RI "ResponseEntity<?> \fBupdateAuthenticatedUser\fP (@RequestBody UpdateUserRequest request)"
+.br
+.ti -1c
+.RI "ResponseEntity< String > \fBchangePassword\fP (@RequestBody ChangePasswordRequest request)"
+.br
+.ti -1c
+.RI "ResponseEntity< List< \fBUser\fP > > \fBallUsers\fP ()"
+.br
+.ti -1c
+.RI "ResponseEntity< \fBUser\fP > \fBgetUserById\fP (@PathVariable Integer id)"
+.br
+.ti -1c
+.RI "ResponseEntity<?> \fBupdateAvatar\fP (@RequestParam('file') MultipartFile file)"
+.br
+.ti -1c
+.RI "ResponseEntity<?> \fBgetAvatar\fP (@PathVariable Integer userId)"
+.br
+.in -1c
+
+.SH "Autor"
+.PP 
+Wygenerowano automatycznie z kodu źródłowego programem Doxygen dla PinterestApp\&.

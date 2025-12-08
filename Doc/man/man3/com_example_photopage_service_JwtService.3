@@ -1,0 +1,34 @@
+.TH "com.example.photopage.service.JwtService" 3 "PinterestApp" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+com.example.photopage.service.JwtService
+.SH SYNOPSIS
+.br
+.PP
+.SS "Metody publiczne"
+
+.in +1c
+.ti -1c
+.RI "String \fBgenerateToken\fP (UserDetails userDetails)"
+.br
+.ti -1c
+.RI "String \fBbuildToken\fP (Map< String, Object > claims, UserDetails userDetails, long expiration)"
+.br
+.ti -1c
+.RI "String \fBextractUsername\fP (String token)"
+.br
+.ti -1c
+.RI "Date \fBextractExpiration\fP (String token)"
+.br
+.ti -1c
+.RI "long \fBgetExpirationTime\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBisTokenValid\fP (String token, UserDetails userDetails)"
+.br
+.in -1c
+
+.SH "Autor"
+.PP 
+Wygenerowano automatycznie z kodu źródłowego programem Doxygen dla PinterestApp\&.

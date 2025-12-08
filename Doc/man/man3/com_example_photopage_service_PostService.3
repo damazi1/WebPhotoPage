@@ -1,0 +1,52 @@
+.TH "com.example.photopage.service.PostService" 3 "PinterestApp" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+com.example.photopage.service.PostService
+.SH SYNOPSIS
+.br
+.PP
+.SS "Metody publiczne"
+
+.in +1c
+.ti -1c
+.RI "\fBPost\fP \fBaddPost\fP (String description, MultipartFile file)"
+.br
+.ti -1c
+.RI "Optional< \fBPost\fP > \fBdeletePost\fP (Integer id)"
+.br
+.ti -1c
+.RI "List< \fBPostsRequest\fP > \fBgetPostsByUserId\fP (Integer userId)"
+.br
+.ti -1c
+.RI "List< \fBPostsRequest\fP > \fBgetMyPosts\fP ()"
+.br
+.ti -1c
+.RI "void \fBtoggleLike\fP (Integer postId)"
+.br
+.ti -1c
+.RI "int \fBgetLikeCount\fP (Integer postId)"
+.br
+.ti -1c
+.RI "boolean \fBhasUserLiked\fP (Integer postId)"
+.br
+.ti -1c
+.RI "List< \fBPostsRequest\fP > \fBgetLikedPosts\fP ()"
+.br
+.ti -1c
+.RI "void \fBaddComment\fP (Integer postId, String content)"
+.br
+.ti -1c
+.RI "List< CommentResponse > \fBgetComments\fP (Integer postId)"
+.br
+.ti -1c
+.RI "void \fBdeleteComment\fP (Integer postId, Integer commentId)"
+.br
+.ti -1c
+.RI "List< \fBPostsRequest\fP > \fBgetAllPosts\fP ()"
+.br
+.in -1c
+
+.SH "Autor"
+.PP 
+Wygenerowano automatycznie z kodu źródłowego programem Doxygen dla PinterestApp\&.

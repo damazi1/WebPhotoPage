@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PinterestApp: Dokumentacja katalogu C:/PinterestApp/WebPhotoPage/Frontend/node_modules/react-masonry-css</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">PinterestApp
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('dir_1a18d2fb64e608fc92b24b06ebb40e08.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja katalogu react-masonry-css</div></div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<p>A Masonry component leveraging CSS and native React rendering, for fast, responsive masonry layouts</p>
+<p><img src="https://user-images.githubusercontent.com/1904774/30821174-491e9670-a1d9-11e7-8b18-250d54858c4f.png" alt="image" class="inline"/></p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3169"></a>
+😎 Why?</h3>
+<p>Existing solutions like React wrapped DeSandro Masonry, while popular, don't actually leverage React's highly optimized Virtual DOM renderer and in DeSandro Masonry's case, actually renders elements twice before showing the layout. All of this is ok but we found it to lead to a slow, "laggy" user experience that would occasionally miss-render our layout.</p>
+<p>Our need for a simple Masonry layout that was fast, used React's Virtual DOM without needing jQuery or other dependencies led us to explore what we could do with the latest techniques using just CSS within a React Component.</p>
+<p>Between flexbox, css columns, css grid we settled on plain ol' div's and a dab of flexbox that allows for "fluid" responsive layouts by default but most importantly is true to Reacts rendering lifecycle.</p>
+<p><em><span class="tt">react-masonry-css</span></em> Is a React Component with a simple interface to order items into the desired columns at specified breakpoints. With minimal CSS this leads to a quick, reliable solution that also has great browser support along with rendering performance.</p>
+<h4 class="doxsection"><a class="anchor" id="autotoc_md3170"></a>
+😄 What does this do</h4>
+<ul>
+<li>Responsive! ..always</li>
+<li>IE 10+</li>
+<li>No Dependencies - Which means no need for jQuery!</li>
+<li>Works with existing CSS animations on your elements, like fading in on first load</li>
+<li>CSS powered (Faster to render)</li>
+<li>Allows for Gaps (Gutters) between elements</li>
+</ul>
+<h4 class="doxsection"><a class="anchor" id="autotoc_md3171"></a>
+🏳️ What doesn't this do</h4>
+<ul>
+<li>Works with elements with different widths</li>
+<li>Sorting based on height - This kills performance, so if you don't need it we're here for you</li>
+</ul>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3172"></a>
+😲 Simple Usage</h3>
+<p>Add <span class="tt">react-masonry-css</span> to your project:</p>
+<div class="fragment"><div class="line">npm install react-masonry-css</div>
+</div><!-- fragment --><p>In your React Component... </p><div class="fragment"><div class="line">import Masonry from &#39;react-masonry-css&#39;</div>
+<div class="line"> </div>
+<div class="line">//...</div>
+<div class="line"> </div>
+<div class="line">&lt;Masonry</div>
+<div class="line">  breakpointCols={3}</div>
+<div class="line">  className=&quot;my-masonry-grid&quot;</div>
+<div class="line">  columnClassName=&quot;my-masonry-grid_column&quot;&gt;</div>
+<div class="line">  {/* array of JSX items */}</div>
+<div class="line">&lt;/Masonry&gt;</div>
+</div><!-- fragment --><p>And, CSS: </p><div class="fragment"><div class="line">.my-masonry-grid {</div>
+<div class="line">  display: -webkit-box; /* Not needed if autoprefixing */</div>
+<div class="line">  display: -ms-flexbox; /* Not needed if autoprefixing */</div>
+<div class="line">  display: flex;</div>
+<div class="line">  margin-left: -30px; /* gutter size offset */</div>
+<div class="line">  width: auto;</div>
+<div class="line">}</div>
+<div class="line">.my-masonry-grid_column {</div>
+<div class="line">  padding-left: 30px; /* gutter size */</div>
+<div class="line">  background-clip: padding-box;</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line">/* Style your items */</div>
+<div class="line">.my-masonry-grid_column &gt; div { /* change div to reference your elements you put in &lt;Masonry&gt; */</div>
+<div class="line">  background: grey;</div>
+<div class="line">  margin-bottom: 30px;</div>
+<div class="line">}</div>
+</div><!-- fragment --><h3 class="doxsection"><a class="anchor" id="autotoc_md3173"></a>
+Responsive Breakpoints</h3>
+<p>Different columns can be specified by passing an object containing key's of the window widths and their value as the number of columns. To have a fallback value, use the <span class="tt">default</span> key.</p>
+<div class="fragment"><div class="line">const breakpointColumnsObj = {</div>
+<div class="line">  default: 4,</div>
+<div class="line">  1100: 3,</div>
+<div class="line">  700: 2,</div>
+<div class="line">  500: 1</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line">//...</div>
+<div class="line"> </div>
+<div class="line">&lt;Masonry</div>
+<div class="line">  breakpointCols={breakpointColumnsObj}</div>
+<div class="line">  className=&quot;my-masonry-grid&quot;</div>
+<div class="line">  columnClassName=&quot;my-masonry-grid_column&quot;</div>
+<div class="line">&gt;</div>
+<div class="line">  &lt;div&gt;My Element&lt;/div&gt;</div>
+<div class="line">  &lt;div&gt;My Element&lt;/div&gt;</div>
+<div class="line">  &lt;div&gt;My Element&lt;/div&gt;</div>
+<div class="line">  &lt;div&gt;My Element&lt;/div&gt;</div>
+<div class="line">&lt;/Masonry&gt;</div>
+</div><!-- fragment --><h3 class="doxsection"><a class="anchor" id="autotoc_md3174"></a>
+Configuration Props</h3>
+<ul>
+<li><span class="tt">breakpointCols={{default: 4, 800: 2}}</span> optional (defaults to 2 columns)</li>
+<li><span class="tt">className</span> for the container</li>
+<li><span class="tt">columnClassName</span> class name added to each generated column</li>
+</ul>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3175"></a>
+Example Demo</h3>
+<p><a href="https://paulcollett.github.io/react-masonry-css/demo/">https://paulcollett.github.io/react-masonry-css/demo/</a></p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3176"></a>
+Common usage</h3>
+<p><b>outputting an array of items:</b> </p><div class="fragment"><div class="line">var items = [</div>
+<div class="line">  {id: 1, name: &#39;My First Item&#39;},</div>
+<div class="line">  {id: 2, name: &#39;Another item&#39;},</div>
+<div class="line">  {id: 3, name: &#39;Third Item&#39;},</div>
+<div class="line">  {id: 4, name: &#39;Here is the Fourth&#39;},</div>
+<div class="line">  {id: 5, name: &#39;High Five&#39;}</div>
+<div class="line">];</div>
+<div class="line"> </div>
+<div class="line">// Convert array to JSX items</div>
+<div class="line">items = items.map(function(item) {</div>
+<div class="line">  return &lt;div key={item.id}&gt;{item.name}&lt;/div&gt;</div>
+<div class="line">});</div>
+<div class="line"> </div>
+<div class="line">&lt;Masonry</div>
+<div class="line">  breakpointCols={myBreakpointsAndCols}</div>
+<div class="line">  className=&quot;my-masonry-grid&quot;</div>
+<div class="line">  columnClassName=&quot;my-masonry-grid_column&quot;</div>
+<div class="line">&gt;</div>
+<div class="line">  {items}</div>
+<div class="line">&lt;/Masonry&gt;</div>
+</div><!-- fragment --><h3 class="doxsection"><a class="anchor" id="autotoc_md3177"></a>
+Optional, Responsive gutters</h3>
+<p>We can add the following to the above CSS to further adjust the layout between screen sizes. </p><div class="fragment"><div class="line">/* Optional, different gutter size on mobile */</div>
+<div class="line">@media (max-width: 800px) {</div>
+<div class="line">  .my-masonry-grid {</div>
+<div class="line">    margin-left: -15px; /* gutter size offset */</div>
+<div class="line">  }</div>
+<div class="line">  .my-masonry-grid_column {</div>
+<div class="line">    padding-left: 15px; /* gutter size offset */</div>
+<div class="line">  }</div>
+<div class="line">  .my-masonry-grid_column &gt; div {</div>
+<div class="line">    margin-bottom: 15px; /* space between items */</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+</div><!-- fragment --><h3 class="doxsection"><a class="anchor" id="autotoc_md3178"></a>
+Use with Preact</h3>
+<p>You can use <span class="tt">react-masonry-css</span> with <a href="https://github.com/preactjs/preact">Preact</a> when using <span class="tt">preact/compat</span></p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3179"></a>
+DummyJS</h3>
+<p>Improve your frontend builds with dynamic placeholder images and dummy text from <a href="https://dummyjs.com/">DummyJs.com</a>. <a href="https://www.npmjs.com/package/dummyjs">https://www.npmjs.com/package/dummyjs</a></p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3180"></a>
+Suggestions &amp; Issues</h3>
+<p><a href="https://github.com/paulcollett/react-masonry-css/issues/">https://github.com/paulcollett/react-masonry-css/issues/</a></p>
+<p><b>Contact me direct:</b></p><ul>
+<li><a href="https://github.com/paulcollett">https://github.com/paulcollett</a></li>
+<li><a href="http://paulcollett.com">http://paulcollett.com</a> </li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>C:</b></li><li class="navelem"><b>PinterestApp</b></li><li class="navelem"><a href="dir_93b954444f651db7daafdbcea013c83c.html">WebPhotoPage</a></li><li class="navelem"><a href="dir_41490aa6f8e37767e1550ecee91356b9.html">Frontend</a></li><li class="navelem"><b>node_modules</b></li><li class="navelem"><a href="dir_1a18d2fb64e608fc92b24b06ebb40e08.html">react-masonry-css</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

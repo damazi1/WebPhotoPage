@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PinterestApp: Dokumentacja katalogu C:/PinterestApp/WebPhotoPage/Frontend/node_modules/path-key</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">PinterestApp
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('dir_623bb0f37422697a07833b9000f207af.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja katalogu path-key</div></div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md3036"></a>
+path-key [![Build Status](<a href="https://travis-ci.org/sindresorhus/path-key.svg?branch=master">https://travis-ci.org/sindresorhus/path-key.svg?branch=master</a>)](<a href="https://travis-ci.org/sindresorhus/path-key">https://travis-ci.org/sindresorhus/path-key</a>)</h1>
+<blockquote class="doxtable">
+<p>Get the <a href="https://en.wikipedia.org/wiki/PATH_(variable)">PATH</a> environment variable key cross-platform </p>
+</blockquote>
+<p>It's usually <span class="tt">PATH</span>, but on Windows it can be any casing like <span class="tt">Path</span>...</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md3037"></a>
+Install</h1>
+<div class="fragment"><div class="line">$ npm install path-key</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md3038"></a>
+Usage</h1>
+<div class="fragment"><div class="line">const pathKey = require(&#39;path-key&#39;);</div>
+<div class="line"> </div>
+<div class="line">const key = pathKey();</div>
+<div class="line">//=&gt; &#39;PATH&#39;</div>
+<div class="line"> </div>
+<div class="line">const PATH = process.env[key];</div>
+<div class="line">//=&gt; &#39;/usr/local/bin:/usr/bin:/bin&#39;</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md3039"></a>
+API</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md3040"></a>
+pathKey(options?)</h2>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3041"></a>
+options</h3>
+<p>Type: <span class="tt">object</span></p>
+<h4 class="doxsection"><a class="anchor" id="autotoc_md3042"></a>
+env</h4>
+<p>Type: <span class="tt">object</span><br  />
+ Default: <a href="https://nodejs.org/api/process.html#process_process_env"><span class="tt">process.env</span></a></p>
+<p>Use a custom environment variables object.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md3043"></a>
+platform</h3>
+<p>Type: <span class="tt">string</span><br  />
+ Default: <a href="https://nodejs.org/api/process.html#process_process_platform"><span class="tt">process.platform</span></a></p>
+<p>Get the PATH key for a specific platform.</p>
+<hr  />
+<div align="center"> <b> <a href="https://tidelift.com/subscription/pkg/npm-path-key?utm_source=npm-path-key&amp;utm_medium=referral&amp;utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a> </b> <br  />
+ <sub> Tidelift helps make open source sustainable for maintainers while giving companies<br  />
+assurances about security, maintenance, and licensing for their dependencies. </sub> </div> </div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>C:</b></li><li class="navelem"><b>PinterestApp</b></li><li class="navelem"><a href="dir_93b954444f651db7daafdbcea013c83c.html">WebPhotoPage</a></li><li class="navelem"><a href="dir_41490aa6f8e37767e1550ecee91356b9.html">Frontend</a></li><li class="navelem"><b>node_modules</b></li><li class="navelem"><a href="dir_623bb0f37422697a07833b9000f207af.html">path-key</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

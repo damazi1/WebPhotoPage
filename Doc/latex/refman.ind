@@ -1,0 +1,58 @@
+\begin{theindex}
+
+  \item {com.example.photopage.config.ApplicationConfiguration}, 
+		\hyperpage{5}
+  \item {com.example.photopage.config.SecurityConfig}, \hyperpage{13}
+  \item {com.example.photopage.config.WebConfig}, \hyperpage{16}
+  \item {com.example.photopage.controller.AuthController}, 
+		\hyperpage{5}
+  \item {com.example.photopage.controller.FollowerController}, 
+		\hyperpage{7}
+  \item {com.example.photopage.controller.PhotoController}, 
+		\hyperpage{10}
+  \item {com.example.photopage.controller.PostController}, 
+		\hyperpage{12}
+  \item {com.example.photopage.controller.UserController}, 
+		\hyperpage{15}
+  \item {com.example.photopage.dto.LoginRequest}, \hyperpage{10}
+  \item {com.example.photopage.dto.LoginResponse}, \hyperpage{10}
+  \item {com.example.photopage.dto.PostsRequest}, \hyperpage{13}
+  \item {com.example.photopage.dto.RegisterRequest}, \hyperpage{13}
+  \item {com.example.photopage.dto.UserDetails}, \hyperpage{15}
+  \item {com.example.photopage.exceptions.GlobalExceptionHandler}, 
+		\hyperpage{8}
+  \item {com.example.photopage.filter.JwtAuthenticationFilter}, 
+		\hyperpage{8}
+  \item {com.example.photopage.model.Comment}, \hyperpage{6}
+  \item {com.example.photopage.model.Follower}, \hyperpage{6}
+  \item {com.example.photopage.model.FollowerId}, \hyperpage{7}
+  \item {com.example.photopage.model.Like}, \hyperpage{9}
+  \item {com.example.photopage.model.LikeId}, \hyperpage{9}
+  \item {com.example.photopage.model.Photo}, \hyperpage{10}
+  \item {com.example.photopage.model.Post}, \hyperpage{11}
+  \item {com.example.photopage.model.Shared}, \hyperpage{14}
+  \item {com.example.photopage.model.SharedId}, \hyperpage{14}
+  \item {com.example.photopage.model.Tag}, \hyperpage{14}
+  \item {com.example.photopage.model.User}, \hyperpage{14}
+  \item {com.example.photopage.PhotoPageApplication}, \hyperpage{11}
+  \item {com.example.photopage.repository.CommentRepository}, 
+		\hyperpage{6}
+  \item {com.example.photopage.repository.FollowerRepository}, 
+		\hyperpage{7}
+  \item {com.example.photopage.repository.LikeRepository}, 
+		\hyperpage{9}
+  \item {com.example.photopage.repository.PhotoRepository}, 
+		\hyperpage{11}
+  \item {com.example.photopage.repository.PostRepository}, 
+		\hyperpage{12}
+  \item {com.example.photopage.repository.UserRepository}, 
+		\hyperpage{15}
+  \item {com.example.photopage.service.AuthenticationService}, 
+		\hyperpage{6}
+  \item {com.example.photopage.service.FollowerService}, \hyperpage{8}
+  \item {com.example.photopage.service.JwtService}, \hyperpage{9}
+  \item {com.example.photopage.service.PhotoService}, \hyperpage{11}
+  \item {com.example.photopage.service.PostService}, \hyperpage{13}
+  \item {com.example.photopage.service.UserService}, \hyperpage{16}
+
+\end{theindex}

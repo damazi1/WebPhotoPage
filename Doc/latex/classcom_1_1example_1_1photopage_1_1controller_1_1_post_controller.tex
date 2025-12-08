@@ -1,0 +1,46 @@
+\doxysection{Dokumentacja klasy com.\+example.\+photopage.\+controller.\+Post\+Controller}
+\hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller}{}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller}\index{com.example.photopage.controller.PostController@{com.example.photopage.controller.PostController}}
+\doxysubsubsection*{Metody publiczne}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a8d544afd698a4003677a8ffceb0d0edb}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a8d544afd698a4003677a8ffceb0d0edb} 
+Response\+Entity$<$ \mbox{\hyperlink{classcom_1_1example_1_1photopage_1_1model_1_1_post}{Post}} $>$ {\bfseries add\+Post} ( @Request\+Part("{}description"{}) String description, @Request\+Part("{}file"{}) Multipart\+File file)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a45ac05806f8aeb5f2e2d52bb9ddca38b}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a45ac05806f8aeb5f2e2d52bb9ddca38b} 
+Response\+Entity$<$ \mbox{\hyperlink{classcom_1_1example_1_1photopage_1_1model_1_1_post}{Post}} $>$ {\bfseries delete\+Post} (@Path\+Variable Integer id)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a5ce464ac9f0906a4c10a1e7ffbac5e29}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a5ce464ac9f0906a4c10a1e7ffbac5e29} 
+Response\+Entity$<$ List$<$ \mbox{\hyperlink{classcom_1_1example_1_1photopage_1_1dto_1_1_posts_request}{Posts\+Request}} $>$ $>$ {\bfseries get\+My\+Posts} ()
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a996b7d1f11981c9da636f3e4da41e604}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a996b7d1f11981c9da636f3e4da41e604} 
+Response\+Entity$<$ List$<$ \mbox{\hyperlink{classcom_1_1example_1_1photopage_1_1dto_1_1_posts_request}{Posts\+Request}} $>$ $>$ {\bfseries get\+Posts\+By\+User\+Id} (@Path\+Variable Integer user\+Id)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_adb4d87f7b5894a3c75d952bffcf4b045}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_adb4d87f7b5894a3c75d952bffcf4b045} 
+Response\+Entity$<$ Void $>$ {\bfseries toggle\+Like} (@Path\+Variable Integer post\+Id)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_aa5294bb7165e06dd65d61e6598113536}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_aa5294bb7165e06dd65d61e6598113536} 
+Response\+Entity$<$ Integer $>$ {\bfseries get\+Likes} (@Path\+Variable Integer post\+Id)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_aa63b7ed19e32b796a2c3c9af235209ab}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_aa63b7ed19e32b796a2c3c9af235209ab} 
+Response\+Entity$<$ Boolean $>$ {\bfseries has\+Liked} (@Path\+Variable Integer post\+Id)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_ae96714b54733c683186bd3652675d08d}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_ae96714b54733c683186bd3652675d08d} 
+Response\+Entity$<$ List$<$ \mbox{\hyperlink{classcom_1_1example_1_1photopage_1_1dto_1_1_posts_request}{Posts\+Request}} $>$ $>$ {\bfseries get\+Liked\+Posts} ()
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a7513b0c73a9150f5a54b839c3913edf1}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a7513b0c73a9150f5a54b839c3913edf1} 
+Response\+Entity$<$ Void $>$ {\bfseries add\+Comment} (@Path\+Variable Integer post\+Id, @Request\+Body Comment\+Request request)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a273264504ef5295c2ec241278bc8eeee}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a273264504ef5295c2ec241278bc8eeee} 
+Response\+Entity$<$ List$<$ Comment\+Response $>$ $>$ {\bfseries get\+Comments} (@Path\+Variable Integer post\+Id)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a51eb95a1237a144ab3f608de2070cc33}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a51eb95a1237a144ab3f608de2070cc33} 
+Response\+Entity$<$ Void $>$ {\bfseries delete\+Comment} (@Path\+Variable Integer post\+Id, @Path\+Variable Integer comment\+Id)
+\item 
+\Hypertarget{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a7468eaf29e612e6f0aab5f0d579c504b}\label{classcom_1_1example_1_1photopage_1_1controller_1_1_post_controller_a7468eaf29e612e6f0aab5f0d579c504b} 
+Response\+Entity$<$ List$<$ \mbox{\hyperlink{classcom_1_1example_1_1photopage_1_1dto_1_1_posts_request}{Posts\+Request}} $>$ $>$ {\bfseries get\+All\+Posts} ()
+\end{DoxyCompactItemize}
+
+
+Dokumentacja dla tej klasy została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Photo\+Page/src/main/java/com/example/photopage/controller/Post\+Controller.\+java\end{DoxyCompactItemize}

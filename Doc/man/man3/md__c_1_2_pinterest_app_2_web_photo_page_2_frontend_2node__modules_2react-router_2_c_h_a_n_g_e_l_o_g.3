@@ -1,0 +1,1278 @@
+.TH "md__c_1_2_pinterest_app_2_web_photo_page_2_frontend_2node__modules_2react-router_2_c_h_a_n_g_e_l_o_g" 3 "PinterestApp" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+md__c_1_2_pinterest_app_2_web_photo_page_2_frontend_2node__modules_2react-router_2_c_h_a_n_g_e_l_o_g \- \fRreact-router\fP 
+.PP
+
+.SH "7\&.9\&.4"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+handle external redirects in from server actions (\fR#14400\fP)
+.IP "\(bu" 2
+New (unstable) \fRuseRoute\fP hook for accessing data from specific routes (\fR#14407\fP)
+
+.PP
+For example, let's say you have an \fRadmin\fP route somewhere in your app and you want any child routes of \fRadmin\fP to all have access to the \fRloaderData\fP and \fRactionData\fP from \fRadmin\&.\fP
+
+.PP
+.PP
+.nf
+// app/routes/admin\&.tsx
+import { Outlet } from "react\-router";
+
+export const loader = () => ({ message: "Hello, loader!" });
+
+export const action = () => ({ count: 1 });
+
+export default function Component() {
+  return (
+    <div>
+      {/* \&.\&.\&. */}
+      <Outlet />
+      {/* \&.\&.\&. */}
+    </div>
+  );
+}
+.fi
+.PP
+
+.PP
+You might even want to create a reusable widget that all of the routes nested under \fRadmin\fP could use:
+
+.PP
+.PP
+.nf
+import { unstable_useRoute as useRoute } from "react\-router";
+
+export function AdminWidget() {
+  // How to get `message` and `count` from `admin` route?
+}
+.fi
+.PP
+
+.PP
+In framework mode, \fRuseRoute\fP knows all your app's routes and gives you TS errors when invalid route IDs are passed in:
+
+.PP
+.PP
+.nf
+export function AdminWidget() {
+  const admin = useRoute("routes/dmin");
+  //                      ^^^^^^^^^^^
+}
+.fi
+.PP
+
+.PP
+\fRuseRoute\fP returns \fRundefined\fP if the route is not part of the current page:
+
+.PP
+.PP
+.nf
+export function AdminWidget() {
+  const admin = useRoute("routes/admin");
+  if (!admin) {
+    throw new Error(`AdminWidget used outside of "routes/admin"`);
+  }
+}
+.fi
+.PP
+
+.PP
+Note: the \fRroot\fP route is the exception since it is guaranteed to be part of the current page\&. As a result, \fRuseRoute\fP never returns \fRundefined\fP for \fRroot\fP\&.
+
+.PP
+\fRloaderData\fP and \fRactionData\fP are marked as optional since they could be accessed before the \fRaction\fP is triggered or after the \fRloader\fP threw an error:
+
+.PP
+.PP
+.nf
+export function AdminWidget() {
+  const admin = useRoute("routes/admin");
+  if (!admin) {
+    throw new Error(`AdminWidget used outside of "routes/admin"`);
+  }
+  const { loaderData, actionData } = admin;
+  console\&.log(loaderData);
+  //          ^? { message: string } | undefined
+  console\&.log(actionData);
+  //          ^? { count: number } | undefined
+}
+.fi
+.PP
+
+.PP
+If instead of a specific route, you wanted access to the \fIcurrent\fP route's \fRloaderData\fP and \fRactionData\fP, you can call \fRuseRoute\fP without arguments:
+
+.PP
+.PP
+.nf
+export function AdminWidget() {
+  const currentRoute = useRoute();
+  currentRoute\&.loaderData;
+  currentRoute\&.actionData;
+}
+.fi
+.PP
+
+.PP
+This usage is equivalent to calling \fRuseLoaderData\fP and \fRuseActionData\fP, but consolidates all route data access into one hook: \fRuseRoute\fP\&.
+
+.PP
+Note: when calling \fRuseRoute()\fP (without a route ID), TS has no way to know which route is the current route\&. As a result, \fRloaderData\fP and \fRactionData\fP are typed as \fRunknown\fP\&. If you want more type-safety, you can either narrow the type yourself with something like \fRzod\fP or you can refactor your app to pass down typed props to your \fRAdminWidget\fP:
+
+.PP
+.PP
+.nf
+export function AdminWidget({
+  message,
+  count,
+}: {
+  message: string;
+  count: number;
+}) {
+  /* \&.\&.\&. */
+}
+.fi
+.PP
+
+.PP
+.SH "7\&.9\&.3"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Do not try to use \fRturbo-stream\fP to decode CDN errors that never reached the server (\fR#14385\fP)
+.IP "  \(bu" 4
+We used to do this but lost this check with the adoption of single fetch
+.PP
+
+.IP "\(bu" 2
+Fix Data Mode regression causing a 404 during initial load in when \fRmiddleware\fP exists without any \fRloader\fP functions (\fR#14393\fP)
+.PP
+.SH "7\&.9\&.2"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+- Update client-side router to run client \fRmiddleware\fP on initial load even if no loaders exist (\fR#14348\fP)
+.IP "  \(bu" 4
+Update \fRcreateRoutesStub\fP to run route middleware
+.IP "    \(bu" 6
+You will need to set the \fR<RoutesStub future={{ v8_middleware: true }} />\fP flag to enable the proper \fRcontext\fP type
+.PP
+
+.PP
+
+.IP "\(bu" 2
+Update Lazy Route Discovery manifest requests to use a singular comma-separated \fRpaths\fP query param instead of repeated \fRp\fP query params (\fR#14321\fP)
+.IP "  \(bu" 4
+This is because Cloudflare has a hard limit of 100 URL search param key/value pairs when used as a key for caching purposes
+.IP "  \(bu" 4
+If more that 100 paths were included, the cache key would be incomplete and could produce false-positive cache hits
+.PP
+
+.IP "\(bu" 2
+[UNSTABLE] Add \fRfetcher\&.unstable_reset()\fP API (\fR#14206\fP)
+.IP "\(bu" 2
+Made useOutlet element reference have stable identity in-between route chages (\fR#13382\fP)
+.IP "\(bu" 2
+feat: enable full transition support for the rsc router (\fR#14362\fP)
+.IP "\(bu" 2
+In RSC Data Mode, handle SSR'd client errors and re-try in the browser (\fR#14342\fP)
+.IP "\(bu" 2
+Support \fRmiddleware\fP prop on \fR<Route>\fP for usage with a data router via \fRcreateRoutesFromElements\fP (\fR#14357\fP)
+.IP "\(bu" 2
+Handle encoded question mark and hash characters in ancestor splat routes (\fR#14249\fP)
+.IP "\(bu" 2
+Fail gracefully on manifest version mismatch logic if \fRsessionStorage\fP access is blocked (\fR#14335\fP)
+.PP
+.SH "7\&.9\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix internal \fRFuture\fP interface naming from \fRmiddleware\fP -> \fRv8_middleware\fP (\fR#14327\fP)
+.PP
+.SH "7\&.9\&.0"
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+Stabilize middleware and context APIs\&. (\fR#14215\fP)
+
+.PP
+We have removed the \fRunstable_\fP prefix from the following APIs and they are now considered stable and ready for production use:
+.IP "  \(bu" 4
+\fR\fRRouterContextProvider\fP\fP
+.IP "  \(bu" 4
+\fR\fRcreateContext\fP\fP
+.IP "  \(bu" 4
+\fRcreateBrowserRouter\fP \fR\fRgetContext\fP\fP option
+.IP "  \(bu" 4
+\fR<HydratedRouter>\fP \fR\fRgetContext\fP\fP prop
+.PP
+
+.PP
+Please see the \fRMiddleware Docs\fP, the \fRMiddleware RFC\fP, and the \fRClient-side Context RFC\fP for more information\&.
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Escape HTML in \fRmeta()\fP JSON-LD content (\fR#14316\fP)
+.IP "\(bu" 2
+Add react-server Await component implementation (\fR#14261\fP)
+.IP "\(bu" 2
+In RSC Data Mode when using a custom basename, fix hydration errors for routes that only have client loaders (\fR#14264\fP)
+.IP "\(bu" 2
+Make \fRhref\fP function available in a react-server context (\fR#14262\fP)
+.IP "\(bu" 2
+decode each time \fRgetPayload()\fP is called to allow for "in-context" decoding and hoisting of contextual assets (\fR#14248\fP)
+.IP "\(bu" 2
+\fRhref()\fP now correctly processes routes that have an extension after the parameter or are a single optional parameter\&. (\fR#13797\fP)
+.PP
+.SH "7\&.8\&.2"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+[UNSTABLE] Remove Data Mode \fRfuture\&.unstable_middleware\fP flag from \fRcreateBrowserRouter\fP (\fR#14213\fP)
+.IP "  \(bu" 4
+This is only needed as a Framework Mode flag because of the route modules and the \fRgetLoadContext\fP type behavior change
+.IP "  \(bu" 4
+In Data Mode, it's an opt-in feature because it's just a new property on a route object, so there's no behavior changes that necessitate a flag
+.PP
+
+.IP "\(bu" 2
+[UNSTABLE] Add \fR<RouterProvider unstable_onError>\fP/\fR<HydratedRouter unstable_onError>\fP prop for client side error reporting (\fR#14162\fP)
+.IP "\(bu" 2
+server action revalidation opt out via $SKIP_REVALIDATION field (\fR#14154\fP)
+.IP "\(bu" 2
+Properly escape interpolated param values in \fRgeneratePath()\fP (\fR#13530\fP)
+.IP "\(bu" 2
+Maintain \fRReadonlyMap\fP and \fRReadonlySet\fP types in server response data\&. (\fR#13092\fP)
+.IP "\(bu" 2
+[UNSTABLE] Delay serialization of \fR\&.data\fP redirects to 202 responses until after middleware chain (\fR#14205\fP)
+.IP "\(bu" 2
+Fix \fRTypeError\fP if you throw from \fRpatchRoutesOnNavigation\fP when no partial matches exist (\fR#14198\fP)
+.IP "\(bu" 2
+Fix \fRbasename\fP usage without a leading slash in data routers (\fR#11671\fP)
+.IP "\(bu" 2
+[UNSTABLE] Update client middleware so it returns the data strategy results allowing for more advanced post-processing middleware (\fR#14151\fP)
+.PP
+.SH "7\&.8\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix usage of optional path segments in nested routes defined using absolute paths (\fR#14135\fP)
+.IP "\(bu" 2
+Bubble client pre-next middleware error to the shallowest ancestor that needs to load, not strictly the shallowest ancestor with a loader (\fR#14150\fP)
+.IP "\(bu" 2
+Fix optional static segment matching in \fRmatchPath\fP (\fR#11813\fP)
+.IP "\(bu" 2
+Fix prerendering when a \fRbasename\fP is set with \fRssr:false\fP (\fR#13791\fP)
+.IP "\(bu" 2
+Provide \fRisRouteErrorResponse\fP utility in \fRreact-server\fP environments (\fR#14166\fP)
+.IP "\(bu" 2
+Propagate non-redirect Responses thrown from middleware to the error boundary on document/data requests (\fR#14182\fP)
+.IP "\(bu" 2
+Handle \fRmeta\fP and \fRlinks\fP Route Exports in RSC Data Mode (\fR#14136\fP)
+.IP "\(bu" 2
+Properly convert returned/thrown \fRdata()\fP values to \fRResponse\fP instances via \fRResponse\&.json()\fP in resource routes and middleware (\fR#14159\fP, \fR#14181\fP)
+.PP
+.SH "7\&.8\&.0"
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+Add \fRnonce\fP prop to \fRLinks\fP & \fRPrefetchPageLinks\fP (\fR#14048\fP)
+.IP "\(bu" 2
+Add \fRloaderData\fP arguments/properties alongside existing \fRdata\fP arguments/properties to provide consistency and clarity between \fRloaderData\fP and \fRactionData\fP across the board (\fR#14047\fP)
+.IP "  \(bu" 4
+Updated types: \fRRoute\&.MetaArgs\fP, \fRRoute\&.MetaMatch\fP, \fRMetaArgs\fP, \fRMetaMatch\fP, \fRRoute\&.ComponentProps\&.matches\fP, \fRUIMatch\fP
+.IP "  \(bu" 4
+\fR@deprecated\fP warnings have been added to the existing \fRdata\fP properties to point users to new \fRloaderData\fP properties, in preparation for removing the \fRdata\fP properties in a future major release
+.PP
+
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Prevent \fI"Did not find corresponding fetcher result"\fP console error when navigating during a \fRfetcher\&.submit\fP revalidation (\fR#14114\fP)
+.IP "\(bu" 2
+Bubble client-side middleware errors prior to \fRnext\fP to the appropriate ancestor error boundary (\fR#14138\fP)
+.IP "\(bu" 2
+Switch Lazy Route Discovery manifest URL generation to usea standalone \fRURLSearchParams\fP instance instead of \fRURL\&.searchParams\fP to avoid a major performance bottleneck in Chrome (\fR#14084\fP)
+.IP "\(bu" 2
+Adjust internal RSC usage of \fRReact\&.use\fP to avoid Webpack compilation errors when using React 18 (\fR#14113\fP)
+.IP "\(bu" 2
+Remove dependency on \fR@types/node\fP in TypeScript declaration files (\fR#14059\fP)
+.IP "\(bu" 2
+Fix types for \fRUIMatch\fP to reflect that the \fRloaderData\fP/\fRdata\fP properties may be \fRundefined\fP (\fR#12206\fP)
+.IP "  \(bu" 4
+When an \fRErrorBoundary\fP is being rendered, not all active matches will have loader data available, since it may have been their \fRloader\fP that threw to trigger the boundary
+.IP "  \(bu" 4
+The \fRUIMatch\&.data\fP type was not correctly handing this and would always reflect the presence of data, leading to the unexpected runtime errors when an \fRErrorBoundary\fP was rendered
+.IP "  \(bu" 4
+⚠️ This may cause some type errors to show up in your code for unguarded \fRmatch\&.data\fP accesses - you should properly guard for \fRundefined\fP values in those scenarios\&.
+.PP
+
+.PP
+.PP
+.nf
+// app/root\&.tsx
+export function loader() {
+  someFunctionThatThrows(); // ❌ Throws an Error
+  return { title: "My Title" };
+}
+
+export function Layout({ children }: { children: React\&.ReactNode }) {
+  let matches = useMatches();
+  let rootMatch = matches[0] as UIMatch<Awaited<ReturnType<typeof loader>>>;
+  //  ^ rootMatch\&.data is incorrectly typed here, so TypeScript does not
+  //    complain if you do the following which throws an error at runtime:
+  let { title } = rootMatch\&.data; // 💥
+
+  return <html>\&.\&.\&.</html>;
+}
+.fi
+.PP
+
+.IP "\(bu" 2
+[UNSTABLE] Ensure resource route errors go through \fRhandleError\fP w/middleware enabled (\fR#14078\fP)
+.IP "\(bu" 2
+[UNSTABLE] Propagate returned Response from server middleware if next wasn't called (\fR#14093\fP)
+.IP "\(bu" 2
+[UNSTABLE] Allow server middlewares to return \fRdata()\fP values which will be converted into a \fRResponse\fP (\fR#14093\fP)
+.IP "\(bu" 2
+[UNSTABLE] Update middleware error handling so that the \fRnext\fP function never throws and instead handles any middleware errors at the proper \fRErrorBoundary\fP and returns the \fRResponse\fP up through the ancestor \fRnext\fP function (\fR#14118\fP)
+.IP "\(bu" 2
+[UNSTABLE] When middleware is enabled, make the \fRcontext\fP parameter read-only (via \fRReadonly<unstable_RouterContextProvider>\fP) so that TypeScript will not allow you to write arbitrary fields to it in loaders, actions, or middleware\&. (\fR#14097\fP)
+.IP "\(bu" 2
+[UNSTABLE] Rename and alter the signature/functionality of the \fRunstable_respond\fP API in \fRstaticHandler\&.query\fP/\fRstaticHandler\&.queryRoute\fP (\fR#14103\fP)
+.IP "  \(bu" 4
+The API has been renamed to \fRunstable_generateMiddlewareResponse\fP for clarity
+.IP "  \(bu" 4
+The main functional change is that instead of running the loaders/actions before calling \fRunstable_respond\fP and handing you the result, we now pass a \fRquery\fP/\fRqueryRoute\fP function as a parameter and you execute the loaders/actions inside your callback, giving you full access to pre-processing and error handling
+.IP "  \(bu" 4
+The \fRquery\fP version of the API now has a signature of \fR(query: (r: Request) => Promise<StaticHandlerContext | Response>) => Promise<Response>\fP
+.IP "  \(bu" 4
+The \fRqueryRoute\fP version of the API now has a signature of \fR(queryRoute: (r: Request) => Promise<Response>) => Promise<Response>\fP
+.IP "  \(bu" 4
+This allows for more advanced usages such as running logic before/after calling \fRquery\fP and direct error handling of errors thrown from query
+.IP "  \(bu" 4
+⚠️ This is a breaking change if you've adopted the \fRstaticHandler\fP \fRunstable_respond\fP API
+.PP
+
+.PP
+.PP
+.nf
+let response = await staticHandler\&.query(request, {
+  requestContext: new unstable_RouterContextProvider(),
+  async unstable_generateMiddlewareResponse(query) {
+    try {
+      // At this point we've run middleware top\-down so we need to call the
+      // handlers and generate the Response to bubble back up the middleware
+      let result = await query(request);
+      if (isResponse(result)) {
+        return result; // Redirects, etc\&.
+      }
+      return await generateHtmlResponse(result);
+    } catch (error: unknown) {
+      return generateErrorResponse(error);
+    }
+  },
+});
+.fi
+.PP
+
+.IP "\(bu" 2
+[UNSTABLE] Convert internal middleware implementations to use the new \fRunstable_generateMiddlewareResponse\fP API (\fR#14103\fP)
+.IP "\(bu" 2
+[UNSTABLE] Change \fRgetLoadContext\fP signature (\fRtype GetLoadContextFunction\fP) when \fRfuture\&.unstable_middleware\fP is enabled so that it returns an \fRunstable_RouterContextProvider\fP instance instead of a \fRMap\fP used to contruct the instance internally (\fR#14097\fP)
+.IP "  \(bu" 4
+This also removes the \fRtype unstable_InitialContext\fP export
+.IP "  \(bu" 4
+⚠️ This is a breaking change if you have adopted middleware and are using a custom server with a \fRgetLoadContext\fP function
+.PP
+
+.IP "\(bu" 2
+[UNSTABLE] Run client middleware on client navigations even if no loaders exist (\fR#14106\fP)
+.IP "\(bu" 2
+[UNSTABLE] Change the \fRunstable_getContext\fP signature on \fRRouterProvider\fP/\fRHydratedRouter\fP/\fRunstable_RSCHydratedRouter\fP so that it returns an \fRunstable_RouterContextProvider\fP instance instead of a \fRMap\fP used to contruct the instance internally (\fR#14097\fP)
+.IP "  \(bu" 4
+⚠️ This is a breaking change if you have adopted the \fRunstable_getContext\fP prop
+.PP
+
+.IP "\(bu" 2
+[UNSTABLE] proxy server action side-effect redirects from actions for document and callServer requests (\fR#14131\fP)
+.IP "\(bu" 2
+[UNSTABLE] Fix RSC Data Mode issue where routes that return \fRfalse\fP from \fRshouldRevalidate\fP would be replaced by an \fR<Outlet />\fP (\fR#14071\fP)
+.PP
+.SH "7\&.7\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+In RSC Data Mode, fix bug where routes with errors weren't forced to revalidate when \fRshouldRevalidate\fP returned false (\fR#14026\fP)
+.IP "\(bu" 2
+In RSC Data Mode, fix \fRMatched leaf route at location "/\&.\&.\&." does not have an element or Component\fP warnings when error boundaries are rendered\&. (\fR#14021\fP)
+.PP
+.SH "7\&.7\&.0"
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+Add unstable RSC support (\fR#13700\fP)
+
+.PP
+For more information, see the \fRRSC documentation\fP\&.
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Handle \fRInvalidCharacterError\fP when validating cookie signature (\fR#13847\fP)
+.IP "\(bu" 2
+Pass a copy of \fRsearchParams\fP to the \fRsetSearchParams\fP callback function to avoid muations of the internal \fRsearchParams\fP instance\&. This was an issue when navigations were blocked because the internal instance be out of sync with \fRuseLocation()\&.search\fP\&. (\fR#12784\fP)
+.IP "\(bu" 2
+Support invalid \fRDate\fP in \fRturbo-stream\fP v2 fork (\fR#13684\fP)
+.IP "\(bu" 2
+In Framework Mode, clear critical CSS in development after initial render (\fR#13872\fP)
+.IP "\(bu" 2
+Strip search parameters from \fRpatchRoutesOnNavigation\fP \fRpath\fP param for fetcher calls (\fR#13911\fP)
+.IP "\(bu" 2
+Skip scroll restoration on useRevalidator() calls because they're not new locations (\fR#13671\fP)
+.IP "\(bu" 2
+Support unencoded UTF-8 routes in prerender config with \fRssr\fP set to \fRfalse\fP (\fR#13699\fP)
+.IP "\(bu" 2
+Do not throw if the url hash is not a valid URI component (\fR#13247\fP)
+.IP "\(bu" 2
+Fix a regression in \fRcreateRoutesStub\fP introduced with the middleware feature\&. (\fR#13946\fP)
+
+.PP
+As part of that work we altered the signature to align with the new middleware APIs without making it backwards compatible with the prior \fRAppLoadContext\fP API\&. This permitted \fRcreateRoutesStub\fP to work if you were opting into middleware and the updated \fRcontext\fP typings, but broke \fRcreateRoutesStub\fP for users not yet opting into middleware\&.
+
+.PP
+We've reverted this change and re-implemented it in such a way that both sets of users can leverage it\&.
+
+.PP
+.PP
+.nf
+// If you have not opted into middleware, the old API should work again
+let context: AppLoadContext = {
+  /*\&.\&.\&.*/
+};
+let Stub = createRoutesStub(routes, context);
+
+// If you have opted into middleware, you should now pass an instantiated `unstable_routerContextProvider` instead of a `getContext` factory function\&.
+let context = new unstable_RouterContextProvider();
+context\&.set(SomeContext, someValue);
+let Stub = createRoutesStub(routes, context);
+.fi
+.PP
+
+.PP
+⚠️ This may be a breaking bug for if you have adopted the unstable Middleware feature and are using \fRcreateRoutesStub\fP with the updated API\&.
+.IP "\(bu" 2
+Remove \fRContent-Length\fP header from Single Fetch responses (\fR#13902\fP)
+.PP
+.SH "7\&.6\&.3"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Do not serialize types for \fRuseRouteLoaderData<typeof clientLoader>\fP (\fR#13752\fP)
+
+.PP
+For types to distinguish a \fRclientLoader\fP from a \fRserverLoader\fP, you MUST annotate \fRclientLoader\fP args:
+
+.PP
+.PP
+.nf
+//                                   👇 annotation required to skip serializing types
+export function clientLoader({}: Route\&.ClientLoaderArgs) {
+  return { fn: () => "earth" };
+}
+
+function SomeComponent() {
+  const data = useRouteLoaderData<typeof clientLoader>("routes/this\-route");
+  const planet = data?\&.fn() ?? "world";
+  return <h1>Hello, {planet}!</h1>;
+}
+.fi
+.PP
+
+.PP
+.SH "7\&.6\&.2"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Avoid additional \fRwith-props\fP chunk in Framework Mode by moving route module component prop logic from the Vite plugin to \fRreact-router\fP (\fR#13650\fP)
+.IP "\(bu" 2
+Slight refactor of internal \fRheaders()\fP function processing for use with RSC (\fR#13639\fP)
+.PP
+.SH "7\&.6\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Update \fRRoute\&.MetaArgs\fP to reflect that \fRdata\fP can be potentially \fRundefined\fP (\fR#13563\fP)
+
+.PP
+This is primarily for cases where a route \fRloader\fP threw an error to it's own \fRErrorBoundary\fP\&. but it also arises in the case of a 404 which renders the root \fRErrorBoundary\fP/\fRmeta\fP but the root loader did not run because not routes matched\&.
+.IP "\(bu" 2
+Partially revert optimization added in \fR7\&.1\&.4\fP to reduce calls to \fRmatchRoutes\fP because it surfaced other issues (\fR#13562\fP)
+.IP "\(bu" 2
+Fix typegen when same route is used at multiple paths (\fR#13574\fP)
+
+.PP
+For example, \fRroutes/route\&.tsx\fP is used at 4 different paths here:
+
+.PP
+.PP
+.nf
+import { type RouteConfig, route } from "@react\-router/dev/routes";
+export default [
+  route("base/:base", "routes/base\&.tsx", [
+    route("home/:home", "routes/route\&.tsx", { id: "home" }),
+    route("changelog/:changelog", "routes/route\&.tsx", { id: "changelog" }),
+    route("splat/*", "routes/route\&.tsx", { id: "splat" }),
+  ]),
+  route("other/:other", "routes/route\&.tsx", { id: "other" }),
+] satisfies RouteConfig;
+.fi
+.PP
+
+.PP
+Previously, typegen would arbitrarily pick one of these paths to be the "winner" and generate types for the route module based on that path\&. Now, typegen creates unions as necessary for alternate paths for the same route file\&.
+.IP "\(bu" 2
+Better types for \fRparams\fP (\fR#13543\fP)
+
+.PP
+For example:
+
+.PP
+.PP
+.nf
+// routes\&.ts
+import { type RouteConfig, route } from "@react\-router/dev/routes";
+
+export default [
+  route("parent/:p", "routes/parent\&.tsx", [
+    route("layout/:l", "routes/layout\&.tsx", [
+      route("child1/:c1a/:c1b", "routes/child1\&.tsx"),
+      route("child2/:c2a/:c2b", "routes/child2\&.tsx"),
+    ]),
+  ]),
+] satisfies RouteConfig;
+.fi
+.PP
+
+.PP
+Previously, \fRparams\fP for the \fRroutes/layout\&.tsx\fP route were calculated as \fR{ p: string, l: string }\fP\&. This incorrectly ignores params that could come from child routes\&. If visiting \fR/parent/1/layout/2/child1/3/4\fP, the actual params passed to \fRroutes/layout\&.tsx\fP will have a type of \fR{ p: string, l: string, c1a: string, c1b: string }\fP\&.
+
+.PP
+Now, \fRparams\fP are aware of child routes and autocompletion will include child params as optionals:
+
+.PP
+.PP
+.nf
+params\&.|
+//     ^ cursor is here and you ask for autocompletion
+// p: string
+// l: string
+// c1a?: string
+// c1b?: string
+// c2a?: string
+// c2b?: string
+.fi
+.PP
+
+.PP
+You can also narrow the types for \fRparams\fP as it is implemented as a normalized union of params for each page that includes \fRroutes/layout\&.tsx\fP:
+
+.PP
+.PP
+.nf
+if (typeof params\&.c1a === 'string') {
+  params\&.|
+  //     ^ cursor is here and you ask for autocompletion
+  // p: string
+  // l: string
+  // c1a: string
+  // c1b: string
+}
+.fi
+.PP
+
+.PP
+
+.PP
+.PP
+
+.PP
+UNSTABLE: renamed internal \fRreact-router/route-module\fP export to \fRreact-router/internal\fP UNSTABLE: removed \fRInfo\fP export from generated \fR+types/*\fP files
+
+.PP
+.IP "\(bu" 2
+Avoid initial fetcher execution 404 error when Lazy Route Discovery is interrupted by a navigation (\fR#13564\fP)
+.IP "\(bu" 2
+href replaces splats \fR*\fP (\fR#13593\fP)
+
+.PP
+.PP
+.nf
+const a = href("/products/*", { "*": "/1/edit" });
+// \-> /products/1/edit
+.fi
+.PP
+
+.PP
+.SH "7\&.6\&.0"
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+Added a new \fRreact-router\&.config\&.ts\fP \fRrouteDiscovery\fP option to configure Lazy Route Discovery behavior\&. (\fR#13451\fP)
+.IP "  \(bu" 4
+By default, Lazy Route Discovery is enabled and makes manifest requests to the \fR/__manifest\fP path:
+.IP "    \(bu" 6
+\fRrouteDiscovery: { mode: "lazy", manifestPath: "/__manifest" }\fP
+.PP
+
+.IP "  \(bu" 4
+You can modify the manifest path used:
+.IP "    \(bu" 6
+\fRrouteDiscovery: { mode: "lazy", manifestPath: "/custom-manifest" }\fP
+.PP
+
+.IP "  \(bu" 4
+Or you can disable this feature entirely and include all routes in the manifest on initial document load:
+.IP "    \(bu" 6
+\fRrouteDiscovery: { mode: "initial" }\fP
+.PP
+
+.PP
+
+.IP "\(bu" 2
+Add support for route component props in \fRcreateRoutesStub\fP\&. This allows you to unit test your route components using the props instead of the hooks: (\fR#13528\fP)
+
+.PP
+.PP
+.nf
+let RoutesStub = createRoutesStub([
+  {
+    path: "/",
+    Component({ loaderData }) {
+      let data = loaderData as { message: string };
+      return <pre data\-testid="data">Message: {data\&.message}</pre>;
+    },
+    loader() {
+      return { message: "hello" };
+    },
+  },
+]);
+
+render(<RoutesStub />);
+
+await waitFor(() => screen\&.findByText("Message: hello"));
+.fi
+.PP
+
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix \fRreact-router\fP module augmentation for \fRNodeNext\fP (\fR#13498\fP)
+.IP "\(bu" 2
+Don't bundle \fRreact-router\fP in \fRreact-router/dom\fP CJS export (\fR#13497\fP)
+.IP "\(bu" 2
+Fix bug where a submitting \fRfetcher\fP would get stuck in a \fRloading\fP state if a revalidating \fRloader\fP redirected (\fR#12873\fP)
+.IP "\(bu" 2
+Fix hydration error if a server \fRloader\fP returned \fRundefined\fP (\fR#13496\fP)
+.IP "\(bu" 2
+Fix initial load 404 scenarios in data mode (\fR#13500\fP)
+.IP "\(bu" 2
+Stabilize \fRuseRevalidator\fP's \fRrevalidate\fP function (\fR#13542\fP)
+.IP "\(bu" 2
+Preserve status code if a \fRclientAction\fP throws a \fRdata()\fP result in framework mode (\fR#13522\fP)
+.IP "\(bu" 2
+Be defensive against leading double slashes in paths to avoid \fRInvalid URL\fP errors from the URL constructor (\fR#13510\fP)
+.IP "  \(bu" 4
+Note we do not sanitize/normalize these paths - we only detect them so we can avoid the error that would be thrown by \fRnew URL("//", window\&.location\&.origin)\fP
+.PP
+
+.IP "\(bu" 2
+Remove \fRNavigator\fP declaration for \fRnavigator\&.connection\&.saveData\fP to avoid messing with any other types beyond \fRsaveData\fP in userland (\fR#13512\fP)
+.IP "\(bu" 2
+Fix \fRhandleError\fP \fRparams\fP values on \fR\&.data\fP requests for routes with a dynamic param as the last URL segment (\fR#13481\fP)
+.IP "\(bu" 2
+Don't trigger an \fRErrorBoundary\fP UI before the reload when we detect a manifest verison mismatch in Lazy Route Discovery (\fR#13480\fP)
+.IP "\(bu" 2
+Inline \fRturbo-stream@2\&.4\&.1\fP dependency and fix decoding ordering of Map/Set instances (\fR#13518\fP)
+.IP "\(bu" 2
+Only render dev warnings in DEV mode (\fR#13461\fP)
+.IP "\(bu" 2
+UNSTABLE: Fix a few bugs with error bubbling in middleware use-cases (\fR#13538\fP)
+.IP "\(bu" 2
+Short circuit post-processing on aborted \fRdataStrategy\fP requests (\fR#13521\fP)
+.IP "  \(bu" 4
+This resolves non-user-facing console errors of the form \fRCannot read properties of undefined (reading 'result')\fP
+.PP
+
+.PP
+.SH "7\&.5\&.3"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix bug where bubbled action errors would result in \fRloaderData\fP being cleared at the handling \fRErrorBoundary\fP route (\fR#13476\fP)
+.IP "\(bu" 2
+Handle redirects from \fRclientLoader\&.hydrate\fP initial load executions (\fR#13477\fP)
+.PP
+.SH "7\&.5\&.2"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Update Single Fetch to also handle the 204 redirects used in \fR?_data\fP requests in Remix v2 (\fR#13364\fP)
+.IP "  \(bu" 4
+This allows applications to return a redirect on \fR\&.data\fP requests from outside the scope of React Router (i\&.e\&., an \fRexpress\fP/\fRhono\fP middleware)
+.IP "  \(bu" 4
+⚠️ Please note that doing so relies on implementation details that are subject to change without a SemVer major release
+.IP "  \(bu" 4
+This is primarily done to ease upgrading to Single Fetch for existing Remix v2 applications, but the recommended way to handle this is redirecting from a route middleware
+.PP
+
+.IP "\(bu" 2
+Adjust approach for Prerendering/SPA Mode via headers (\fR#13453\fP)
+.PP
+.SH "7\&.5\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix single fetch bug where no revalidation request would be made when navigating upwards to a reused parent route (\fR#13253\fP)
+.IP "\(bu" 2
+When using the object-based \fRroute\&.lazy\fP API, the \fRHydrateFallback\fP and \fRhydrateFallbackElement\fP properties are now skipped when lazy loading routes after hydration\&. (\fR#13376\fP)
+
+.PP
+If you move the code for these properties into a separate file, you can use this optimization to avoid downloading unused hydration code\&. For example:
+
+.PP
+.PP
+.nf
+createBrowserRouter([
+  {
+    path: "/show/:showId",
+    lazy: {
+      loader: async () => (await import("\&./show\&.loader\&.js"))\&.loader,
+      Component: async () => (await import("\&./show\&.component\&.js"))\&.Component,
+      HydrateFallback: async () =>
+        (await import("\&./show\&.hydrate\-fallback\&.js"))\&.HydrateFallback,
+    },
+  },
+]);
+.fi
+.PP
+
+.IP "\(bu" 2
+Properly revalidate prerendered paths when param values change (\fR#13380\fP)
+.IP "\(bu" 2
+UNSTABLE: Add a new \fRunstable_runClientMiddleware\fP argument to \fRdataStrategy\fP to enable middleware execution in custom \fRdataStrategy\fP implementations (\fR#13395\fP)
+.IP "\(bu" 2
+UNSTABLE: Add better error messaging when \fRgetLoadContext\fP is not updated to return a \fRMap\fP" (<a href="https://github.com/remix-run/react-router/pull/13242" >#13242</a>)- Do not automatically add <tt>null</tt> to <tt>staticHandler\&.query()</tt> <tt>context\&.loaderData</tt> if routes do not have loaders (<a href="https://github.com/remix-run/react-router/pull/13223" >#13223</a>)  - This was a Remix v2 implementation detail inadvertently left in for React Router v7  - Now that we allow returning <tt>undefined</tt> from loaders, our prior check of <tt>loaderData[routeId] !== undefined</tt> was no longer sufficient and was changed to a <tt>routeId in loaderData</tt> check - these <tt>null</tt> values can cause issues for this new check  - ⚠️ This could be a "breaking bug fix" for you if you are doing manual SSR with <tt>createStaticHandler()</tt>/<tt>\\<StaticRouterProvider\\></tt>, and using <tt>context\&.loaderData</tt> to control <tt>\\<RouterProvider\\></tt> hydration behavior on the client- Fix prerendering when a loader returns a redirect (<a href="https://github.com/remix-run/react-router/pull/13365" >#13365</a>)- UNSTABLE: Update context type for <tt>LoaderFunctionArgs</tt>/<tt>ActionFunctionArgs</tt> when middleware is enabled (<a href="https://github.com/remix-run/react-router/pull/13381" >#13381</a>)- Add support for the new <tt>unstable_shouldCallHandler</tt>/<tt>unstable_shouldRevalidateArgs</tt> APIs in <tt>dataStrategy</tt> (<a href="https://github.com/remix-run/react-router/pull/13253" >#13253</a>)@section autotoc_md3221 7\&.5\&.0@subsection autotoc_md3222 Minor Changes- Add granular object-based API for <tt>route\&.lazy</tt> to support lazy loading of individual route properties, for example: (<a href="https://github.com/remix-run/react-router/pull/13294" >#13294</a>)  @icode{ts}   createBrowserRouter([    {      path: "/show/:showId",      lazy: {        loader: async () => (await import("\&./show\&.loader\&.js"))\&.loader,        action: async () => (await import("\&./show\&.action\&.js"))\&.action,        Component: async () => (await import("\&./show\&.component\&.js"))\&.Component,      },    },  ]);  @endicode   <strong>Breaking change for <tt>route\&.unstable_lazyMiddleware</tt> consumers</strong>  The <tt>route\&.unstable_lazyMiddleware</tt> property is no longer supported\&. If you want to lazily load middleware, you must use the new object-based <tt>route\&.lazy</tt> API with <tt>route\&.lazy\&.unstable_middleware</tt>, for example:  @icode{ts}   createBrowserRouter([    {      path: "/show/:showId",      lazy: {        unstable_middleware: async () =>          (await import("\&./show\&.middleware\&.js"))\&.middleware,        // etc\&.      },    },  ]);  @endicode @subsection autotoc_md3223 Patch Changes- Introduce <tt>unstable_subResourceIntegrity</tt> future flag that enables generation of an importmap with integrity for the scripts that will be loaded by the browser\&. (<a href="https://github.com/remix-run/react-router/pull/13163" >#13163</a>)@section autotoc_md3224 7\&.4\&.1@subsection autotoc_md3225 Patch Changes- Fix types on <tt>unstable_MiddlewareFunction</tt> to avoid type errors when a middleware doesn't return a value (<a href="https://github.com/remix-run/react-router/pull/13311" >#13311</a>)- Dedupe calls to <tt>route\&.lazy</tt> functions (<a href="https://github.com/remix-run/react-router/pull/13260" >#13260</a>)- Add support for <tt>route\&.unstable_lazyMiddleware</tt> function to allow lazy loading of middleware logic\&. (<a href="https://github.com/remix-run/react-router/pull/13210" >#13210</a>)  <strong>Breaking change for <tt>unstable_middleware</tt> consumers</strong>  The <tt>route\&.unstable_middleware</tt> property is no longer supported in the return value from <tt>route\&.lazy</tt>\&. If you want to lazily load middleware, you must use <tt>route\&.unstable_lazyMiddleware</tt>\&.@section autotoc_md3226 7\&.4\&.0@subsection autotoc_md3227 Patch Changes- Fix root loader data on initial load redirects in SPA mode (<a href="https://github.com/remix-run/react-router/pull/13222" >#13222</a>)- Load ancestor pathless/index routes in lazy route discovery for upwards non-eager-discoery routing (<a href="https://github.com/remix-run/react-router/pull/13203" >#13203</a>)- Fix <tt>shouldRevalidate</tt> behavior for <tt>clientLoader</tt>-only routes in <tt>ssr:true</tt> apps (<a href="https://github.com/remix-run/react-router/pull/13221" >#13221</a>)- UNSTABLE: Fix <tt>RequestHandler</tt> <tt>loadContext</tt> parameter type when middleware is enabled (<a href="https://github.com/remix-run/react-router/pull/13204" >#13204</a>)- UNSTABLE: Update <tt>Route\&.unstable_MiddlewareFunction</tt> to have a return value of <tt>Response | undefined</tt> instead of <tt>Response | void</tt> becaue you should not return anything if you aren't returning the <tt>Response</tt> (<a href="https://github.com/remix-run/react-router/pull/13199" >#13199</a>)- UNSTABLE(BREAKING): If a middleware throws an error, ensure we only bubble the error itself via <tt>next()</tt> and are no longer leaking the <tt>MiddlewareError</tt> implementation detail (<a href="https://github.com/remix-run/react-router/pull/13180" >#13180</a>)@section autotoc_md3228 7\&.3\&.0@subsection autotoc_md3229 Minor Changes- Add <tt>fetcherKey</tt> as a parameter to <tt>patchRoutesOnNavigation</tt> (<a href="https://github.com/remix-run/react-router/pull/13061" >#13061</a>)  - In framework mode, Lazy Route Discovery will now detect manifest version mismatches after a new deploy  - On navigations to undiscovered routes, this mismatch will trigger a document reload of the destination path  - On <tt>fetcher</tt> calls to undiscovered routes, this mismatch will trigger a document reload of the current path@subsection autotoc_md3230 Patch Changes- Skip resource route flow in dev server in SPA mode (<a href="https://github.com/remix-run/react-router/pull/13113" >#13113</a>)- Support middleware on routes (unstable) (<a href="https://github.com/remix-run/react-router/pull/12941" >#12941</a>)  Middleware is implemented behind a <tt>future\&.unstable_middleware</tt> flag\&. To enable, you must enable the flag and the types in your <tt>react-router-config\&.ts</tt> file:  @icode{ts}   import type { Config } from "@react-router/dev/config";  import type { Future } from "react-router";  declare module "react-router" {    interface Future {      unstable_middleware: true; // 👈 Enable middleware types    }  }  export default {    future: {      unstable_middleware: true, // 👈 Enable middleware    },  } satisfies Config;  @endicode   ⚠️ Middleware is unstable and should not be adopted in production\&. There is at least one known de-optimization in route module loading for <tt>clientMiddleware</tt> that we will be addressing this before a stable release\&.  ⚠️ Enabling middleware contains a breaking change to the <tt>context</tt> parameter passed to your <tt>loader</tt>/<tt>action</tt> functions - see below for more information\&.  Once enabled, routes can define an array of middleware functions that will run sequentially before route handlers run\&. These functions accept the same parameters as <tt>loader</tt>/<tt>action</tt> plus an additional <tt>next</tt> parameter to run the remaining data pipeline\&. This allows middlewares to perform logic before and after handlers execute\&.  @icode{tsx}   // Framework mode  export const unstable_middleware = [serverLogger, serverAuth]; // server  export const unstable_clientMiddleware = [clientLogger]; // client  // Library mode  const routes = [    {      path: "/",      // Middlewares are client-side for library mode SPA's      unstable_middleware: [clientLogger, clientAuth],      loader: rootLoader,      Component: Root,    },  ];  @endicode   Here's a simple example of a client-side logging middleware that can be placed on the root route:  @icode{tsx}   const clientLogger: Route\&.unstable_ClientMiddlewareFunction = async (    { request },    next,  ) => {    let start = performance\&.now();    // Run the remaining middlewares and all route loaders    await next();    let duration = performance\&.now() - start;    console\&.log(`Navigated to ${request\&.url} (${duration}ms)`);  };  @endicode   Note that in the above example, the <tt>next</tt>/<tt>middleware</tt> functions don't return anything\&. This is by design as on the client there is no "response" to send over the network like there would be for middlewares running on the server\&. The data is all handled behind the scenes by the stateful <tt>router</tt>\&.  For a server-side middleware, the <tt>next</tt> function will return the HTTP <tt>Response</tt> that React Router will be sending across the wire, thus giving you a chance to make changes as needed\&. You may throw a new response to short circuit and respond immediately, or you may return a new or altered response to override the default returned by <tt>next()</tt>\&.  @icode{tsx}   const serverLogger: Route\&.unstable_MiddlewareFunction = async (    { request, params, context },    next,  ) => {    let start = performance\&.now();    // 👇 Grab the response here    let res = await next();    let duration = performance\&.now() - start;    console\&.log(`Navigated to ${request\&.url} (${duration}ms)`);    // 👇 And return it here (optional if you don't modify the response)    return res;  };  @endicode   You can throw a <tt>redirect</tt> from a middleware to short circuit any remaining processing:  @icode{tsx}   import { sessionContext } from "\&.\&./context";  const serverAuth: Route\&.unstable_MiddlewareFunction = (    { request, params, context },    next,  ) => {    let session = context\&.get(sessionContext);    let user = session\&.get("user");    if (!user) {      session\&.set("returnTo", request\&.url);      throw redirect("/login", 302);    }  };  @endicode   <em>Note that in cases like this where you don't need to do any post-processing you don't need to call the <tt>next</tt> function or return a <tt>Response</tt>\&.</em>  Here's another example of using a server middleware to detect 404s and check the CMS for a redirect:  @icode{tsx}   const redirects: Route\&.unstable_MiddlewareFunction = async ({    request,    next,  }) => {    // attempt to handle the request    let res = await next();    // if it's a 404, check the CMS for a redirect, do it last    // because it's expensive    if (res\&.status === 404) {      let cmsRedirect = await checkCMSRedirects(request\&.url);      if (cmsRedirect) {        throw redirect(cmsRedirect, 302);      }    }    return res;  };  @endicode   <strong><tt>context</tt> parameter</strong>  When middleware is enabled, your application will use a different type of <tt>context</tt> parameter in your loaders and actions to provide better type safety\&. Instead of <tt>AppLoadContext</tt>, <tt>context</tt> will now be an instance of <tt>ContextProvider</tt> that you can use with type-safe contexts (similar to <tt>React\&.createContext</tt>):  @icode{ts}   import { unstable_createContext } from "react-router";  import { Route } from "\&./+types/root";  import type { Session } from "\&./sessions\&.server";  import { getSession } from "\&./sessions\&.server";  let sessionContext = unstable_createContext<Session>();  const sessionMiddleware: Route\&.unstable_MiddlewareFunction = ({    context,    request,  }) => {    let session = await getSession(request);    context\&.set(sessionContext, session);    //                          ^ must be of type Session  };  // \&.\&.\&. then in some downstream middleware  const loggerMiddleware: Route\&.unstable_MiddlewareFunction = ({    context,    request,  }) => {    let session = context\&.get(sessionContext);    //  ^ typeof Session    console\&.log(session\&.get("userId"), request\&.method, request\&.url);  };  // \&.\&.\&. or some downstream loader  export function loader({ context }: Route\&.LoaderArgs) {    let session = context\&.get(sessionContext);    let profile = await getProfile(session\&.get("userId"));    return { profile };  }  @endicode   If you are using a custom server with a <tt>getLoadContext</tt> function, the return value for initial context values passed from the server adapter layer is no longer an object and should now return an <tt>unstable_InitialContext</tt> (<tt>Map\\<RouterContext, unknown\\></tt>):  @icode{ts}   let adapterContext = unstable_createContext<MyAdapterContext>();  function getLoadContext(req, res): unstable_InitialContext {    let map = new Map();    map\&.set(adapterContext, getAdapterContext(req));    return map;  }  @endicode - Fix types for loaderData and actionData that contained <tt>Record</tt>s (<a href="https://github.com/remix-run/react-router/pull/13139" >#13139</a>)  UNSTABLE(BREAKING):  <tt>unstable_SerializesTo</tt> added a way to register custom serialization types in Single Fetch for other library and framework authors like Apollo\&.  It was implemented with branded type whose branded property that was made optional so that casting arbitrary values was easy:  @icode{ts}   // without the brand being marked as optional  let x1 = 42 as unknown as unstable_SerializesTo<number>;  //          ^^^^^^^^^^  // with the brand being marked as optional  let x2 = 42 as unstable_SerializesTo<number>;  @endicode   However, this broke type inference in <tt>loaderData</tt> and <tt>actionData</tt> for any <tt>Record</tt> types as those would now (incorrectly) match <tt>unstable_SerializesTo</tt>\&.  This affected all users, not just those that depended on <tt>unstable_SerializesTo</tt>\&.  To fix this, the branded property of <tt>unstable_SerializesTo</tt> is marked as required instead of optional\&.  For library and framework authors using <tt>unstable_SerializesTo</tt>, you may need to add <tt>as unknown</tt> casts before casting to <tt>unstable_SerializesTo</tt>\&.- Fix single fetch <tt>_root\&.data</tt> requests when a <tt>basename</tt> is used (<a href="https://github.com/remix-run/react-router/pull/12898" >#12898</a>)- Add <tt>context</tt> support to client side data routers (unstable) (<a href="https://github.com/remix-run/react-router/pull/12941" >#12941</a>)  Your application <tt>loader</tt> and <tt>action</tt> functions on the client will now receive a <tt>context</tt> parameter\&. This is an instance of <tt>unstable_RouterContextProvider</tt> that you use with type-safe contexts (similar to <tt>React\&.createContext</tt>) and is most useful with the corresponding <tt>middleware</tt>/<tt>clientMiddleware</tt> API's:  @icode{ts}   import { unstable_createContext } from "react-router";  type User = {    /*\&.\&.\&.*/  };  let userContext = unstable_createContext<User>();  function sessionMiddleware({ context }) {    let user = await getUser();    context\&.set(userContext, user);  }  // \&.\&.\&. then in some downstream loader  function loader({ context }) {    let user = context\&.get(userContext);    let profile = await getProfile(user\&.id);    return { profile };  }  @endicode   Similar to server-side requests, a fresh <tt>context</tt> will be created per navigation (or <tt>fetcher</tt> call)\&. If you have initial data you'd like to populate in the context for every request, you can provide an <tt>unstable_getContext</tt> function at the root of your app:  - Library mode - <tt>createBrowserRouter(routes, { unstable_getContext })</tt>  - Framework mode - <tt>\\<HydratedRouter unstable_getContext\\></tt>  This function should return an value of type <tt>unstable_InitialContext</tt> which is a <tt>Map\\<unstable_RouterContext, unknown\\></tt> of context's and initial values:  @icode{ts}   const loggerContext = unstable_createContext<(\&.\&.\&.args: unknown[]) => void>();  function logger(\&.\&.\&.args: unknown[]) {    console\&.log(new Date\&.toISOString(), \&.\&.\&.args);  }  function unstable_getContext() {    let map = new Map();    map\&.set(loggerContext, logger);    return map;  }  @endicode @section autotoc_md3231 7\&.2\&.0@subsection autotoc_md3232 Minor Changes- New type-safe <tt>href</tt> utility that guarantees links point to actual paths in your app (<a href="https://github.com/remix-run/react-router/pull/13012" >#13012</a>)  @icode{tsx}   import { href } from "react-router";  export default function Component() {    const link = href("/blog/:slug", { slug: "my-first-post" });    return (      <main>        <Link to={href("/products/:id", { id: "asdf" })} />        <NavLink to={href("/:lang?/about", { lang: "en" })} />      </main>    );  }  @endicode @subsection autotoc_md3233 Patch Changes- Fix typegen for repeated params (<a href="https://github.com/remix-run/react-router/pull/13012" >#13012</a>)  In React Router, path parameters are keyed by their name\&.  So for a path pattern like <tt>/a/:id/b/:id?/c/:id</tt>, the last <tt>:id</tt> will set the value for <tt>id</tt> in <tt>useParams</tt> and the <tt>params</tt> prop\&.  For example, <tt>/a/1/b/2/c/3</tt> will result in the value <tt>{ id: 3 }</tt> at runtime\&.  Previously, generated types for params incorrectly modeled repeated params with an array\&.  So <tt>/a/1/b/2/c/3</tt> generated a type like <tt>{ id: [1,2,3] }</tt>\&.  To be consistent with runtime behavior, the generated types now correctly model the "last one wins" semantics of path parameters\&.  So <tt>/a/1/b/2/c/3</tt> now generates a type like <tt>{ id: 3 }</tt>\&.- Don't apply Single Fetch revalidation de-optimization when in SPA mode since there is no server HTTP request (<a href="https://github.com/remix-run/react-router/pull/12948" >#12948</a>)- Properly handle revalidations to across a prerender/SPA boundary (<a href="https://github.com/remix-run/react-router/pull/13021" >#13021</a>)  - In "hybrid" applications where some routes are pre-rendered and some are served from a SPA fallback, we need to avoid making <tt>\&.data</tt> requests if the path wasn't pre-rendered because the request will 404  - We don't know all the pre-rendered paths client-side, however:    - All <tt>loader</tt> data in <tt>ssr:false</tt> mode is static because it's generated at build time    - A route must use a <tt>clientLoader</tt> to do anything dynamic    - Therefore, if a route only has a <tt>loader</tt> and not a <tt>clientLoader</tt>, we disable revalidation by default because there is no new data to retrieve    - We short circuit and skip single fetch <tt>\&.data</tt> request logic if there are no server loaders with <tt>shouldLoad=true</tt> in our single fetch <tt>dataStrategy</tt>    - This ensures that the route doesn't cause a <tt>\&.data</tt> request that would 404 after a submission- Error at build time in <tt>ssr:false</tt> + <tt>prerender</tt> apps for the edge case scenario of: (<a href="https://github.com/remix-run/react-router/pull/13021" >#13021</a>)  - A parent route has only a <tt>loader</tt> (does not have a <tt>clientLoader</tt>)  - The parent route is pre-rendered  - The parent route has children routes which are not prerendered  - This means that when the child paths are loaded via the SPA fallback, the parent won't have any <tt>loaderData</tt> because there is no server on which to run the <tt>loader</tt>  - This can be resolved by either adding a parent <tt>clientLoader</tt> or pre-rendering the child paths  - If you add a <tt>clientLoader</tt>, calling the <tt>serverLoader()</tt> on non-prerendered paths will throw a 404- Add unstable support for splitting route modules in framework mode via <tt>future\&.unstable_splitRouteModules</tt> (<a href="https://github.com/remix-run/react-router/pull/11871" >#11871</a>)- Add <tt>unstable_SerializesTo</tt> brand type for library authors to register types serializable by React Router's streaming format (<tt>turbo-stream</tt>) (<a href="https://github.com/remix-run/react-router/commit/ab5b05b02f99f062edb3c536c392197c88eb6c77" ><tt>ab5b05b02</tt></a>)- Align dev server behavior with static file server behavior when <tt>ssr:false</tt> is set (<a href="https://github.com/remix-run/react-router/pull/12948" >#12948</a>)  - When no <tt>prerender</tt> config exists, only SSR down to the root <tt>HydrateFallback</tt> (SPA Mode)  - When a <tt>prerender</tt> config exists but the current path is not prerendered, only SSR down to the root <tt>HydrateFallback</tt> (SPA Fallback)  - Return a 404 on <tt>\&.data</tt> requests to non-pre-rendered paths- Improve prefetch performance of CSS side effects in framework mode (<a href="https://github.com/remix-run/react-router/pull/12889" >#12889</a>)- Disable Lazy Route Discovery for all <tt>ssr:false</tt> apps and not just "SPA Mode" because there is no runtime server to serve the search-param-configured <tt>__manifest</tt> requests (<a href="https://github.com/remix-run/react-router/pull/12894" >#12894</a>)  - We previously only disabled this for "SPA Mode" which is <tt>ssr:false</tt> and no <tt>prerender</tt> config but we realized it should apply to all <tt>ssr:false</tt> apps, including those prerendering multiple pages  - In those <tt>prerender</tt> scenarios we would prerender the <tt>/__manifest</tt> file assuming the static file server would serve it but that makes some unneccesary assumptions about the static file server behaviors- Properly handle interrupted manifest requests in lazy route discovery (<a href="https://github.com/remix-run/react-router/pull/12915" >#12915</a>)@section autotoc_md3234 7\&.1\&.5@subsection autotoc_md3235 Patch Changes- Fix regression introduced in <tt>7\&.1\&.4</tt> via <a href="https://github.com/remix-run/react-router/pull/12800" >#12800</a> that caused issues navigating to hash routes inside splat routes for applications using Lazy Route Discovery (<tt>patchRoutesOnNavigation</tt>) (<a href="https://github.com/remix-run/react-router/pull/12927" >#12927</a>)@section autotoc_md3236 7\&.1\&.4@subsection autotoc_md3237 Patch Changes- Internal reorg to clean up some duplicated route module types (<a href="https://github.com/remix-run/react-router/pull/12799" >#12799</a>)- Properly handle status codes that cannot have a body in single fetch responses (204, etc\&.) (<a href="https://github.com/remix-run/react-router/pull/12760" >#12760</a>)- Stop erroring on resource routes that return raw strings/objects and instead serialize them as <tt>text/plain</tt> or <tt>application/json</tt> responses (<a href="https://github.com/remix-run/react-router/pull/12848" >#12848</a>)  - This only applies when accessed as a resource route without the <tt>\&.data</tt> extension  - When accessed from a Single Fetch <tt>\&.data</tt> request, they will still be encoded via <tt>turbo-stream</tt>- Optimize Lazy Route Discovery path discovery to favor a single <tt>querySelectorAll</tt> call at the <tt>body</tt> level instead of many calls at the sub-tree level (<a href="https://github.com/remix-run/react-router/pull/12731" >#12731</a>)- Properly bubble headers as <tt>errorHeaders</tt> when throwing a <tt>data()</tt> result (<a href="https://github.com/remix-run/react-router/pull/12846" >#12846</a>)  - Avoid duplication of <tt>Set-Cookie</tt> headers could be duplicated if also returned from <tt>headers</tt>- Optimize route matching by skipping redundant <tt>matchRoutes</tt> calls when possible (<a href="https://github.com/remix-run/react-router/pull/12800" >#12800</a>)@section autotoc_md3238 7\&.1\&.3<em>No changes</em>@section autotoc_md3239 7\&.1\&.2@subsection autotoc_md3240 Patch Changes- Fix issue with fetcher data cleanup in the data layer on fetcher unmount (<a href="https://github.com/remix-run/react-router/pull/12681" >#12681</a>)- Do not rely on <tt>symbol</tt> for filtering out <tt>redirect</tt> responses from loader data (<a href="https://github.com/remix-run/react-router/pull/12694" >#12694</a>)  Previously, some projects were getting type checking errors like:  @icode{ts}   error TS4058: Return type of exported function has or is using name 'redirectSymbol' from external module "node_modules/\&.\&.\&." but cannot be named\&.  @endicode   Now that <tt>symbol</tt>s are not used for the <tt>redirect</tt> response type, these errors should no longer be present\&.@section autotoc_md3241 7\&.1\&.1<em>No changes</em>@section autotoc_md3242 7\&.1\&.0@subsection autotoc_md3243 Patch Changes- Throw unwrapped single fetch redirect to align with pre-single fetch behavior (<a href="https://github.com/remix-run/react-router/pull/12506" >#12506</a>)- Ignore redirects when inferring loader data types (<a href="https://github.com/remix-run/react-router/pull/12527" >#12527</a>)- Remove <tt>\\<Link prefetch\\></tt> warning which suffers from false positives in a lazy route discovery world (<a href="https://github.com/remix-run/react-router/pull/12485" >#12485</a>)@section autotoc_md3244 7\&.0\&.2@subsection autotoc_md3245 Patch Changes- temporarily only use one build in export map so packages can have a peer dependency on react router (<a href="https://github.com/remix-run/react-router/pull/12437" >#12437</a>)- Generate wide <tt>matches</tt> and <tt>params</tt> types for current route and child routes (<a href="https://github.com/remix-run/react-router/pull/12397" >#12397</a>)  At runtime, <tt>matches</tt> includes child route matches and <tt>params</tt> include child route path parameters\&.  But previously, we only generated types for parent routes in <tt>matches</tt>; for <tt>params</tt>, we only considered the parent routes and the current route\&.  To align our generated types more closely to the runtime behavior, we now generate more permissive, wider types when accessing child route information\&.@section autotoc_md3246 7\&.0\&.1<em>No changes</em>@section autotoc_md3247 7\&.0\&.0@subsection autotoc_md3248 Major Changes- Remove the original <tt>defer</tt> implementation in favor of using raw promises via single fetch and <tt>turbo-stream</tt>\&. This removes these exports from React Router: (<a href="https://github.com/remix-run/react-router/pull/11744" >#11744</a>)  - <tt>defer</tt>  - <tt>AbortedDeferredError</tt>  - <tt>type TypedDeferredData</tt>  - <tt>UNSAFE_DeferredData</tt>  - <tt>UNSAFE_DEFERRED_SYMBOL</tt>,- - Collapse <tt>\\@remix-run/router</tt> into <tt>react-router</tt> (<a href="https://github.com/remix-run/react-router/pull/11505" >#11505</a>)  - Collapse <tt>react-router-dom</tt> into <tt>react-router</tt>  - Collapse <tt>\\@remix-run/server-runtime</tt> into <tt>react-router</tt>  - Collapse <tt>\\@remix-run/testing</tt> into <tt>react-router</tt>- Remove single fetch future flag\&. (<a href="https://github.com/remix-run/react-router/pull/11522" >#11522</a>)- Drop support for Node 16, React Router SSR now requires Node 18 or higher (<a href="https://github.com/remix-run/react-router/pull/11391" >#11391</a>)- Remove <tt>future\&.v7_startTransition</tt> flag (<a href="https://github.com/remix-run/react-router/pull/11696" >#11696</a>)- - Expose the underlying router promises from the following APIs for compsition in React 19 APIs: (<a href="https://github.com/remix-run/react-router/pull/11521" >#11521</a>)    - <tt>useNavigate()</tt>    - <tt>useSubmit</tt>    - <tt>useFetcher()\&.load</tt>    - <tt>useFetcher()\&.submit</tt>    - <tt>useRevalidator\&.revalidate</tt>- Remove <tt>future\&.v7_normalizeFormMethod</tt> future flag (<a href="https://github.com/remix-run/react-router/pull/11697" >#11697</a>)- For Remix consumers migrating to React Router, the <tt>crypto</tt> global from the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API" >Web Crypto API</a> is now required when using cookie and session APIs\&. This means that the following APIs are provided from <tt>react-router</tt> rather than platform-specific packages: (<a href="https://github.com/remix-run/react-router/pull/11837" >#11837</a>)  - <tt>createCookie</tt>  - <tt>createCookieSessionStorage</tt>  - <tt>createMemorySessionStorage</tt>  - <tt>createSessionStorage</tt>  For consumers running older versions of Node, the <tt>installGlobals</tt> function from <tt>\\@remix-run/node</tt> has been updated to define <tt>globalThis\&.crypto</tt>, using <a href="https://nodejs.org/api/webcrypto.html" >Node's <tt>require('node:crypto')\&.webcrypto</tt> implementation\&.</a>  Since platform-specific packages no longer need to implement this API, the following low-level APIs have been removed:  - <tt>createCookieFactory</tt>  - <tt>createSessionStorageFactory</tt>  - <tt>createCookieSessionStorageFactory</tt>  - <tt>createMemorySessionStorageFactory</tt>- Imports/Exports cleanup (<a href="https://github.com/remix-run/react-router/pull/11840" >#11840</a>)  - Removed the following exports that were previously public API from <tt>\\@remix-run/router</tt>    - types      - <tt>AgnosticDataIndexRouteObject</tt>      - <tt>AgnosticDataNonIndexRouteObject</tt>      - <tt>AgnosticDataRouteMatch</tt>      - <tt>AgnosticDataRouteObject</tt>      - <tt>AgnosticIndexRouteObject</tt>      - <tt>AgnosticNonIndexRouteObject</tt>      - <tt>AgnosticRouteMatch</tt>      - <tt>AgnosticRouteObject</tt>      - <tt>TrackedPromise</tt>      - <tt>unstable_AgnosticPatchRoutesOnMissFunction</tt>      - <tt>Action</tt> -> exported as <tt>NavigationType</tt> via <tt>react-router</tt>      - <tt>Router</tt> exported as <tt>DataRouter</tt> to differentiate from RR's <tt>\\<Router\\></tt>    - API      - <tt>getToPathname</tt> (<tt>\\@private</tt>)      - <tt>joinPaths</tt> (<tt>\\@private</tt>)      - <tt>normalizePathname</tt> (<tt>\\@private</tt>)      - <tt>resolveTo</tt> (<tt>\\@private</tt>)      - <tt>stripBasename</tt> (<tt>\\@private</tt>)      - <tt>createBrowserHistory</tt> -> in favor of <tt>createBrowserRouter</tt>      - <tt>createHashHistory</tt> -> in favor of <tt>createHashRouter</tt>      - <tt>createMemoryHistory</tt> -> in favor of <tt>createMemoryRouter</tt>      - <tt>createRouter</tt>      - <tt>createStaticHandler</tt> -> in favor of wrapper <tt>createStaticHandler</tt> in RR Dom      - <tt>getStaticContextFromError</tt>  - Removed the following exports that were previously public API from <tt>react-router</tt>    - <tt>Hash</tt>    - <tt>Pathname</tt>    - <tt>Search</tt>- update minimum node version to 18 (<a href="https://github.com/remix-run/react-router/pull/11690" >#11690</a>)- Remove <tt>future\&.v7_prependBasename</tt> from the ionternalized <tt>\\@remix-run/router</tt> package (<a href="https://github.com/remix-run/react-router/pull/11726" >#11726</a>)- Migrate Remix type generics to React Router (<a href="https://github.com/remix-run/react-router/pull/12180" >#12180</a>)  - These generics are provided for Remix v2 migration purposes  - These generics and the APIs they exist on should be considered informally deprecated in favor of the new <tt>Route\&.*</tt> types  - Anyone migrating from React Router v6 should probably not leverage these new generics and should migrate straight to the <tt>Route\&.*</tt> types  - For React Router v6 users, these generics are new and should not impact your app, with one exception    - <tt>useFetcher</tt> previously had an optional generic (used primarily by Remix v2) that expected the data type    - This has been updated in v7 to expect the type of the function that generates the data (i\&.e\&., <tt>typeof loader</tt>/<tt>typeof action</tt>)    - Therefore, you should update your usages:      - ❌ <tt>useFetcher\\<LoaderData\\>()</tt>      - ✅ <tt>useFetcher\\<typeof loader\\>()</tt>- Remove <tt>future\&.v7_throwAbortReason</tt> from internalized <tt>\\@remix-run/router</tt> package (<a href="https://github.com/remix-run/react-router/pull/11728" >#11728</a>)- Add <tt>exports</tt> field to all packages (<a href="https://github.com/remix-run/react-router/pull/11675" >#11675</a>)- node package no longer re-exports from react-router (<a href="https://github.com/remix-run/react-router/pull/11702" >#11702</a>)- renamed RemixContext to FrameworkContext (<a href="https://github.com/remix-run/react-router/pull/11705" >#11705</a>)- updates the minimum React version to 18 (<a href="https://github.com/remix-run/react-router/pull/11689" >#11689</a>)- PrefetchPageDescriptor replaced by PageLinkDescriptor (<a href="https://github.com/remix-run/react-router/pull/11960" >#11960</a>)- - Consolidate types previously duplicated across <tt>\\@remix-run/router</tt>, <tt>\\@remix-run/server-runtime</tt>, and <tt>\\@remix-run/react</tt> now that they all live in <tt>react-router</tt> (<a href="https://github.com/remix-run/react-router/pull/12177" >#12177</a>)    - Examples: <tt>LoaderFunction</tt>, <tt>LoaderFunctionArgs</tt>, <tt>ActionFunction</tt>, <tt>ActionFunctionArgs</tt>, <tt>DataFunctionArgs</tt>, <tt>RouteManifest</tt>, <tt>LinksFunction</tt>, <tt>Route</tt>, <tt>EntryRoute</tt>    - The <tt>RouteManifest</tt> type used by the "remix" code is now slightly stricter because it is using the former <tt>\\@remix-run/router</tt> <tt>RouteManifest</tt>      - <tt>Record\\<string, Route\\> -\\> Record\\<string, Route | undefined\\></tt>    - Removed <tt>AppData</tt> type in favor of inlining <tt>unknown</tt> in the few locations it was used    - Removed <tt>ServerRuntimeMeta*</tt> types in favor of the <tt>Meta*</tt> types they were duplicated from- - Remove the <tt>future\&.v7_partialHydration</tt> flag (<a href="https://github.com/remix-run/react-router/pull/11725" >#11725</a>)    - This also removes the <tt>\\<RouterProvider fallbackElement\\></tt> prop      - To migrate, move the <tt>fallbackElement</tt> to a <tt>hydrateFallbackElement</tt>/<tt>HydrateFallback</tt> on your root route    - Also worth nothing there is a related breaking changer with this future flag:      - Without <tt>future\&.v7_partialHydration</tt> (when using <tt>fallbackElement</tt>), <tt>state\&.navigation</tt> was populated during the initial load      - With <tt>future\&.v7_partialHydration</tt>, <tt>state\&.navigation</tt> remains in an <tt>\\"idle\\"</tt> state during the initial load- Remove <tt>v7_relativeSplatPath</tt> future flag (<a href="https://github.com/remix-run/react-router/pull/11695" >#11695</a>)- Drop support for Node 18, update minimum Node vestion to 20 (<a href="https://github.com/remix-run/react-router/pull/12171" >#12171</a>)  - Remove <tt>installGlobals()</tt> as this should no longer be necessary- Remove remaining future flags (<a href="https://github.com/remix-run/react-router/pull/11820" >#11820</a>)  - React Router <tt>v7_skipActionErrorRevalidation</tt>  - Remix <tt>v3_fetcherPersist</tt>, <tt>v3_relativeSplatPath</tt>, <tt>v3_throwAbortReason</tt>- rename createRemixStub to createRoutesStub (<a href="https://github.com/remix-run/react-router/pull/11692" >#11692</a>)- Remove <tt>\\@remix-run/router</tt> deprecated <tt>detectErrorBoundary</tt> option in favor of <tt>mapRouteProperties</tt> (<a href="https://github.com/remix-run/react-router/pull/11751" >#11751</a>)- Add <tt>react-router/dom</tt> subpath export to properly enable <tt>react-dom</tt> as an optional <tt>peerDependency</tt> (<a href="https://github.com/remix-run/react-router/pull/11851" >#11851</a>)  - This ensures that we don't blindly <tt>import ReactDOM from \\"react-dom\\"</tt> in <tt>\\<RouterProvider\\></tt> in order to access <tt>ReactDOM\&.flushSync()</tt>, since that would break <tt>createMemoryRouter</tt> use cases in non-DOM environments  - DOM environments should import from <tt>react-router/dom</tt> to get the proper component that makes <tt>ReactDOM\&.flushSync()</tt> available:    - If you are using the Vite plugin, use this in your <tt>entry\&.client\&.tsx</tt>:      - <tt>import { HydratedRouter } from 'react-router/dom'</tt>    - If you are not using the Vite plugin and are manually calling <tt>createBrowserRouter</tt>/<tt>createHashRouter</tt>:      - <tt>import { RouterProvider } from \\"react-router/dom\\"</tt>- Remove <tt>future\&.v7_fetcherPersist</tt> flag (<a href="https://github.com/remix-run/react-router/pull/11731" >#11731</a>)- Update <tt>cookie</tt> dependency to <tt>^1\&.0\&.1</tt> - please see the <a href="https://github.com/jshttp/cookie/releases" >release notes</a> for any breaking changes (<a href="https://github.com/remix-run/react-router/pull/12172" >#12172</a>)@subsection autotoc_md3249 Minor Changes- - Add support for <tt>prerender</tt> config in the React Router vite plugin, to support existing SSG use-cases (<a href="https://github.com/remix-run/react-router/pull/11539" >#11539</a>)    - You can use the <tt>prerender</tt> config to pre-render your <tt>\&.html</tt> and <tt>\&.data</tt> files at build time and then serve them statically at runtime (either from a running server or a CDN)    - <tt>prerender</tt> can either be an array of string paths, or a function (sync or async) that returns an array of strings so that you can dynamically generate the paths by talking to your CMS, etc\&.  @icode{ts}   // react-router\&.config\&.ts  import type { Config } from "@react-router/dev/config";  export default {    async prerender() {      let slugs = await fakeGetSlugsFromCms();      // Prerender these paths into `\&.html` files at build time, and `\&.data`      // files if they have loaders      return ["/", "/about", \&.\&.\&.slugs\&.map((slug) => `/product/${slug}`)];    },  } satisfies Config;  async function fakeGetSlugsFromCms() {    await new Promise((r) => setTimeout(r, 1000));    return ["shirt", "hat"];  }  @endicode - Params, loader data, and action data as props for route component exports (<a href="https://github.com/remix-run/react-router/pull/11961" >#11961</a>)  @icode{tsx}   export default function Component({ params, loaderData, actionData }) {}  export function HydrateFallback({ params }) {}  export function ErrorBoundary({ params, loaderData, actionData }) {}  @endicode - Remove duplicate <tt>RouterProvider</tt> impliementations (<a href="https://github.com/remix-run/react-router/pull/11679" >#11679</a>)- ### Typesafety improvements (<a href="https://github.com/remix-run/react-router/pull/12019" >#12019</a>)  React Router now generates types for each of your route modules\&.  You can access those types by importing them from <tt>\&./+types\&.\\<route filename without extension\\></tt>\&.  For example:  @icode{ts}   // app/routes/product\&.tsx  import type * as Route from "\&./+types\&.product";  export function loader({ params }: Route\&.LoaderArgs) {}  export default function Component({ loaderData }: Route\&.ComponentProps) {}  @endicode   This initial implementation targets type inference for:  - <tt>Params</tt> : Path parameters from your routing config in <tt>routes\&.ts</tt> including file-based routing  - <tt>LoaderData</tt> : Loader data from <tt>loader</tt> and/or <tt>clientLoader</tt> within your route module  - <tt>ActionData</tt> : Action data from <tt>action</tt> and/or <tt>clientAction</tt> within your route module  In the future, we plan to add types for the rest of the route module exports: <tt>meta</tt>, <tt>links</tt>, <tt>headers</tt>, <tt>shouldRevalidate</tt>, etc\&.  We also plan to generate types for typesafe <tt>Link</tt>s:  @icode{tsx}   <Link to="/products/:id" params={{ id: 1 }} />  //        ^^^^^^^^^^^^^          ^^^^^^^^^  // typesafe `to` and `params` based on the available routes in your app  @endicode   Check out our docs for more:  - <a href="https://reactrouter.com/dev/guides/explanation/type-safety" ><em>Explanations > Type Safety</em></a>  - <a href="https://reactrouter.com/dev/guides/how-to/setting-up-type-safety" ><em>How-To > Setting up type safety</em></a>- Stabilize <tt>unstable_dataStrategy</tt> (<a href="https://github.com/remix-run/react-router/pull/11969" >#11969</a>)- Stabilize <tt>unstable_patchRoutesOnNavigation</tt> (<a href="https://github.com/remix-run/react-router/pull/11970" >#11970</a>)@subsection autotoc_md3250 Patch Changes- No changes (<a href="https://github.com/remix-run/react-router/commit/506329c4e2e7aba9837cbfa44df6103b49423745" ><tt>506329c4e</tt></a>)- chore: re-enable development warnings through a <tt>development</tt> exports condition\&. (<a href="https://github.com/remix-run/react-router/pull/12269" >#12269</a>)- Remove unstable upload handler\&. (<a href="https://github.com/remix-run/react-router/pull/12015" >#12015</a>)- Remove unneeded dependency on @web3-storage/multipart-parser (<a href="https://github.com/remix-run/react-router/pull/12274" >#12274</a>)- Fix redirects returned from loaders/actions using <tt>data()</tt> (<a href="https://github.com/remix-run/react-router/pull/12021" >#12021</a>)- fix(react-router): (v7) fix static prerender of non-ascii characters (<a href="https://github.com/remix-run/react-router/pull/12161" >#12161</a>)- Replace <tt>substr</tt> with <tt>substring</tt> (<a href="https://github.com/remix-run/react-router/pull/12080" >#12080</a>)- Remove the deprecated <tt>json</tt> utility (<a href="https://github.com/remix-run/react-router/pull/12146" >#12146</a>)  - You can use <a href="https://developer.mozilla.org/en-US/docs/Web/API/Response/json_static" ><tt>Response\&.json</tt></a> if you still need to construct JSON responses in your app- Remove unneeded dependency on source-map (<a href="https://github.com/remix-run/react-router/pull/12275" >#12275</a>)@section autotoc_md3251 6\&.28\&.0@subsection autotoc_md3252 Minor Changes- - Log deprecation warnings for v7 flags (<a href="https://github.com/remix-run/react-router/pull/11750" >#11750</a>)  - Add deprecation warnings to <tt>json</tt>/<tt>defer</tt> in favor of returning raw objects    - These methods will be removed in React Router v7@subsection autotoc_md3253 Patch Changes- Update JSDoc URLs for new website structure (add /v6/ segment) (<a href="https://github.com/remix-run/react-router/pull/12141" >#12141</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.21\&.0</tt>@section autotoc_md3254 6\&.27\&.0@subsection autotoc_md3255 Minor Changes- Stabilize <tt>unstable_patchRoutesOnNavigation</tt> (<a href="https://github.com/remix-run/react-router/pull/11973" >#11973</a>)  - Add new <tt>PatchRoutesOnNavigationFunctionArgs</tt> type for convenience (<a href="https://github.com/remix-run/react-router/pull/11967" >#11967</a>)- Stabilize <tt>unstable_dataStrategy</tt> (<a href="https://github.com/remix-run/react-router/pull/11974" >#11974</a>)- Stabilize the <tt>unstable_flushSync</tt> option for navigations and fetchers (<a href="https://github.com/remix-run/react-router/pull/11989" >#11989</a>)- Stabilize the <tt>unstable_viewTransition</tt> option for navigations and the corresponding <tt>unstable_useViewTransitionState</tt> hook (<a href="https://github.com/remix-run/react-router/pull/11989" >#11989</a>)@subsection autotoc_md3256 Patch Changes- Fix bug when submitting to the current contextual route (parent route with an index child) when an <tt>?index</tt> param already exists from a prior submission (<a href="https://github.com/remix-run/react-router/pull/12003" >#12003</a>)- Fix <tt>useFormAction</tt> bug - when removing <tt>?index</tt> param it would not keep other non-Remix <tt>index</tt> params (<a href="https://github.com/remix-run/react-router/pull/12003" >#12003</a>)- Fix types for <tt>RouteObject</tt> within <tt>PatchRoutesOnNavigationFunction</tt>'s <tt>patch</tt> method so it doesn't expect agnostic route objects passed to <tt>patch</tt> (<a href="https://github.com/remix-run/react-router/pull/11967" >#11967</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.20\&.0</tt>@section autotoc_md3257 6\&.26\&.2@subsection autotoc_md3258 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.19\&.2</tt>@section autotoc_md3259 6\&.26\&.1@subsection autotoc_md3260 Patch Changes- Rename <tt>unstable_patchRoutesOnMiss</tt> to <tt>unstable_patchRoutesOnNavigation</tt> to match new behavior (<a href="https://github.com/remix-run/react-router/pull/11888" >#11888</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.19\&.1</tt>@section autotoc_md3261 6\&.26\&.0@subsection autotoc_md3262 Minor Changes- Add a new <tt>replace(url, init?)</tt> alternative to <tt>redirect(url, init?)</tt> that performs a <tt>history\&.replaceState</tt> instead of a <tt>history\&.pushState</tt> on client-side navigation redirects (<a href="https://github.com/remix-run/react-router/pull/11811" >#11811</a>)@subsection autotoc_md3263 Patch Changes- Fix initial hydration behavior when using <tt>future\&.v7_partialHydration</tt> along with <tt>unstable_patchRoutesOnMiss</tt> (<a href="https://github.com/remix-run/react-router/pull/11838" >#11838</a>)  - During initial hydration, <tt>router\&.state\&.matches</tt> will now include any partial matches so that we can render ancestor <tt>HydrateFallback</tt> components- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.19\&.0</tt>@section autotoc_md3264 6\&.25\&.1No significant changes to this package were made in this release\&. <a href="https://github.com/remix-run/react-router/blob/main/CHANGELOG.md" >See the repo <tt>CHANGELOG\&.md</tt></a> for an overview of all changes in v6\&.25\&.1\&.@section autotoc_md3265 6\&.25\&.0@subsection autotoc_md3266 Minor Changes- Stabilize <tt>future\&.unstable_skipActionErrorRevalidation</tt> as <tt>future\&.v7_skipActionErrorRevalidation</tt> (<a href="https://github.com/remix-run/react-router/pull/11769" >#11769</a>)  - When this flag is enabled, actions will not automatically trigger a revalidation if they return/throw a <tt>Response</tt> with a <tt>4xx</tt>/<tt>5xx</tt> status code  - You may still opt-into revalidation via <tt>shouldRevalidate</tt>  - This also changes <tt>shouldRevalidate</tt>'s <tt>unstable_actionStatus</tt> parameter to <tt>actionStatus</tt>@subsection autotoc_md3267 Patch Changes- Fix regression and properly decode paths inside <tt>useMatch</tt> so matches/params reflect decoded params (<a href="https://github.com/remix-run/react-router/pull/11789" >#11789</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.18\&.0</tt>@section autotoc_md3268 6\&.24\&.1@subsection autotoc_md3269 Patch Changes- When using <tt>future\&.v7_relativeSplatPath</tt>, properly resolve relative paths in splat routes that are children of pathless routes (<a href="https://github.com/remix-run/react-router/pull/11633" >#11633</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.17\&.1</tt>@section autotoc_md3270 6\&.24\&.0@subsection autotoc_md3271 Minor Changes- Add support for Lazy Route Discovery (a\&.k\&.a\&. Fog of War) (<a href="https://github.com/remix-run/react-router/pull/11626" >#11626</a>)  - RFC: <https://github\&.com/remix-run/react-router/discussions/11113>  - <tt>unstable_patchRoutesOnMiss</tt> docs: <https://reactrouter\&.com/v6/routers/create-browser-router>@subsection autotoc_md3272 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.17\&.0</tt>@section autotoc_md3273 6\&.23\&.1@subsection autotoc_md3274 Patch Changes- allow undefined to be resolved with <tt>\\<Await\\></tt> (<a href="https://github.com/remix-run/react-router/pull/11513" >#11513</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.16\&.1</tt>@section autotoc_md3275 6\&.23\&.0@subsection autotoc_md3276 Minor Changes- Add a new <tt>unstable_dataStrategy</tt> configuration option (<a href="https://github.com/remix-run/react-router/pull/11098" >#11098</a>)  - This option allows Data Router applications to take control over the approach for executing route loaders and actions  - The default implementation is today's behavior, to fetch all loaders in parallel, but this option allows users to implement more advanced data flows including Remix single-fetch, middleware/context APIs, automatic loader caching, and more@subsection autotoc_md3277 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.16\&.0</tt>@section autotoc_md3278 6\&.22\&.3@subsection autotoc_md3279 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.15\&.3</tt>@section autotoc_md3280 6\&.22\&.2@subsection autotoc_md3281 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.15\&.2</tt>@section autotoc_md3282 6\&.22\&.1@subsection autotoc_md3283 Patch Changes- Fix encoding/decoding issues with pre-encoded dynamic parameter values (<a href="https://github.com/remix-run/react-router/pull/11199" >#11199</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.15\&.1</tt>@section autotoc_md3284 6\&.22\&.0@subsection autotoc_md3285 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.15\&.0</tt>@section autotoc_md3286 6\&.21\&.3@subsection autotoc_md3287 Patch Changes- Remove leftover <tt>unstable_</tt> prefix from <tt>Blocker</tt>/<tt>BlockerFunction</tt> types (<a href="https://github.com/remix-run/react-router/pull/11187" >#11187</a>)@section autotoc_md3288 6\&.21\&.2@subsection autotoc_md3289 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.14\&.2</tt>@section autotoc_md3290 6\&.21\&.1@subsection autotoc_md3291 Patch Changes- Fix bug with <tt>route\&.lazy</tt> not working correctly on initial SPA load when <tt>v7_partialHydration</tt> is specified (<a href="https://github.com/remix-run/react-router/pull/11121" >#11121</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.14\&.1</tt>@section autotoc_md3292 6\&.21\&.0@subsection autotoc_md3293 Minor Changes- Add a new <tt>future\&.v7_relativeSplatPath</tt> flag to implement a breaking bug fix to relative routing when inside a splat route\&. (<a href="https://github.com/remix-run/react-router/pull/11087" >#11087</a>)  This fix was originally added in <a href="https://github.com/remix-run/react-router/issues/10983" >#10983</a> and was later reverted in <a href="https://github.com/remix-run/react-router/pull/11078" >#11078</a> because it was determined that a large number of existing applications were relying on the buggy behavior (see <a href="https://github.com/remix-run/react-router/issues/11052" >#11052</a>)  <strong>The Bug</strong>  The buggy behavior is that without this flag, the default behavior when resolving relative paths is to <em>ignore</em> any splat (<tt>*</tt>) portion of the current route path\&.  <strong>The Background</strong>  This decision was originally made thinking that it would make the concept of nested different sections of your apps in <tt>\\<Routes\\></tt> easier if relative routing would <em>replace</em> the current splat:  @icode{jsx}   <BrowserRouter>    <Routes>      <Route path="/" element={<Home />} />      <Route path="dashboard/*" element={<Dashboard />} />    </Routes>  </BrowserRouter>  @endicode   Any paths like <tt>/dashboard</tt>, <tt>/dashboard/team</tt>, <tt>/dashboard/projects</tt> will match the <tt>Dashboard</tt> route\&. The dashboard component itself can then render nested <tt>\\<Routes\\></tt>:  @icode{jsx}   function Dashboard() {    return (      <div>        <h2>Dashboard</h2>        <nav>          <Link to="/">Dashboard Home</Link>          <Link to="team">Team</Link>          <Link to="projects">Projects</Link>        </nav>        <Routes>          <Route path="/" element={<DashboardHome />} />          <Route path="team" element={<DashboardTeam />} />          <Route path="projects" element={<DashboardProjects />} />        </Routes>      </div>    );  }  @endicode   Now, all links and route paths are relative to the router above them\&. This makes code splitting and compartmentalizing your app really easy\&. You could render the <tt>Dashboard</tt> as its own independent app, or embed it into your large app without making any changes to it\&.  <strong>The Problem</strong>  The problem is that this concept of ignoring part of a path breaks a lot of other assumptions in React Router - namely that <tt>\\"\&.\\"</tt> always means the current location pathname for that route\&. When we ignore the splat portion, we start getting invalid paths when using <tt>\\"\&.\\"</tt>:  @icode{jsx}   // If we are on URL /dashboard/team, and we want to link to /dashboard/team:  function DashboardTeam() {    // ❌ This is broken and results in <a href="/dashboard">    return <Link to="\&.">A broken link to the Current URL</Link>;    // ✅ This is fixed but super unintuitive since we're already at /dashboard/team!    return <Link to="\&./team">A broken link to the Current URL</Link>;  }  @endicode   We've also introduced an issue that we can no longer move our <tt>DashboardTeam</tt> component around our route hierarchy easily - since it behaves differently if we're underneath a non-splat route, such as <tt>/dashboard/:widget</tt>\&. Now, our <tt>\\"\&.\\"</tt> links will, properly point to ourself <em>inclusive of the dynamic param value</em> so behavior will break from it's corresponding usage in a <tt>/dashboard/*</tt> route\&.  Even worse, consider a nested splat route configuration:  @icode{jsx}   <BrowserRouter>    <Routes>      <Route path="dashboard">        <Route path="*" element={<Dashboard />} />      </Route>    </Routes>  </BrowserRouter>  @endicode   Now, a <tt>\\<Link to=\\"\&.\\"\\></tt> and a <tt>\\<Link to=\\"\&.\&.\\"\\></tt> inside the <tt>Dashboard</tt> component go to the same place! That is definitely not correct!  Another common issue arose in Data Routers (and Remix) where any <tt>\\<Form\\></tt> should post to it's own route <tt>action</tt> if you the user doesn't specify a form action:  @icode{jsx}   let router = createBrowserRouter({    path: "/dashboard",    children: [      {        path: "*",        action: dashboardAction,        Component() {          // ❌ This form is broken!  It throws a 405 error when it submits because          // it tries to submit to /dashboard (without the splat value) and the parent          // `/dashboard` route doesn't have an action          return <Form method="post">\&.\&.\&.</Form>;        },      },    ],  });  @endicode   This is just a compounded issue from the above because the default location for a <tt>Form</tt> to submit to is itself (<tt>\\"\&.\\"</tt>) - and if we ignore the splat portion, that now resolves to the parent route\&.  <strong>The Solution</strong>  If you are leveraging this behavior, it's recommended to enable the future flag, move your splat to it's own route, and leverage <tt>\&.\&./</tt> for any links to "sibling" pages:  @icode{jsx}   <BrowserRouter>    <Routes>      <Route path="dashboard">        <Route index path="*" element={<Dashboard />} />      </Route>    </Routes>  </BrowserRouter>  function Dashboard() {    return (      <div>        <h2>Dashboard</h2>        <nav>          <Link to="\&.\&.">Dashboard Home</Link>          <Link to="\&.\&./team">Team</Link>          <Link to="\&.\&./projects">Projects</Link>        </nav>        <Routes>          <Route path="/" element={<DashboardHome />} />          <Route path="team" element={<DashboardTeam />} />          <Route path="projects" element={<DashboardProjects />} />        </Router>      </div>    );  }  @endicode   This way, <tt>\&.</tt> means "the full current pathname for my route" in all cases (including static, dynamic, and splat routes) and <tt>\&.\&.</tt> always means "my parents pathname"\&.@subsection autotoc_md3294 Patch Changes- Properly handle falsy error values in ErrorBoundary's (<a href="https://github.com/remix-run/react-router/pull/11071" >#11071</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.14\&.0</tt>@section autotoc_md3295 6\&.20\&.1@subsection autotoc_md3296 Patch Changes- Revert the <tt>useResolvedPath</tt> fix for splat routes due to a large number of applications that were relying on the buggy behavior (see <https://github\&.com/remix-run/react-router/issues/11052#issuecomment-1836589329>)\&. We plan to re-introduce this fix behind a future flag in the next minor version\&. (<a href="https://github.com/remix-run/react-router/pull/11078" >#11078</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.13\&.1</tt>@section autotoc_md3297 6\&.20\&.0@subsection autotoc_md3298 Minor Changes- Export the <tt>PathParam</tt> type from the public API (<a href="https://github.com/remix-run/react-router/pull/10719" >#10719</a>)@subsection autotoc_md3299 Patch Changes- Fix bug with <tt>resolveTo</tt> in splat routes (<a href="https://github.com/remix-run/react-router/pull/11045" >#11045</a>)  - This is a follow up to <a href="https://github.com/remix-run/react-router/pull/10983" >#10983</a> to handle the few other code paths using <tt>getPathContributingMatches</tt>  - This removes the <tt>UNSAFE_getPathContributingMatches</tt> export from <tt>\\@remix-run/router</tt> since we no longer need this in the <tt>react-router</tt>/<tt>react-router-dom</tt> layers- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.13\&.0</tt>@section autotoc_md3300 6\&.19\&.0@subsection autotoc_md3301 Minor Changes- Add <tt>unstable_flushSync</tt> option to <tt>useNavigate</tt>/<tt>useSumbit</tt>/<tt>fetcher\&.load</tt>/<tt>fetcher\&.submit</tt> to opt-out of <tt>React\&.startTransition</tt> and into <tt>ReactDOM\&.flushSync</tt> for state updates (<a href="https://github.com/remix-run/react-router/pull/11005" >#11005</a>)- Remove the <tt>unstable_</tt> prefix from the <a href="https://reactrouter.com/v6/hooks/use-blocker" ><tt>useBlocker</tt></a> hook as it's been in use for enough time that we are confident in the API\&. We do not plan to remove the prefix from <tt>unstable_usePrompt</tt> due to differences in how browsers handle <tt>window\&.confirm</tt> that prevent React Router from guaranteeing consistent/correct behavior\&. (<a href="https://github.com/remix-run/react-router/pull/10991" >#10991</a>)@subsection autotoc_md3302 Patch Changes- Fix <tt>useActionData</tt> so it returns proper contextual action data and not <em>any</em> action data in the tree (<a href="https://github.com/remix-run/react-router/pull/11023" >#11023</a>)- Fix bug in <tt>useResolvedPath</tt> that would cause <tt>useResolvedPath(\\"\&.\\")</tt> in a splat route to lose the splat portion of the URL path\&. (<a href="https://github.com/remix-run/react-router/pull/10983" >#10983</a>)  - ⚠️ This fixes a quite long-standing bug specifically for <tt>\\"\&.\\"</tt> paths inside a splat route which incorrectly dropped the splat portion of the URL\&. If you are relative routing via <tt>\\"\&.\\"</tt> inside a splat route in your application you should double check that your logic is not relying on this buggy behavior and update accordingly\&.- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.12\&.0</tt>@section autotoc_md3303 6\&.18\&.0@subsection autotoc_md3304 Patch Changes- Fix the <tt>future</tt> prop on <tt>BrowserRouter</tt>, <tt>HashRouter</tt> and <tt>MemoryRouter</tt> so that it accepts a <tt>Partial\\<FutureConfig\\></tt> instead of requiring all flags to be included\&. (<a href="https://github.com/remix-run/react-router/pull/10962" >#10962</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.11\&.0</tt>@section autotoc_md3305 6\&.17\&.0@subsection autotoc_md3306 Patch Changes- Fix <tt>RouterProvider</tt> <tt>future</tt> prop type to be a <tt>Partial\\<FutureConfig\\></tt> so that not all flags must be specified (<a href="https://github.com/remix-run/react-router/pull/10900" >#10900</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.10\&.0</tt>@section autotoc_md3307 6\&.16\&.0@subsection autotoc_md3308 Minor Changes- In order to move towards stricter TypeScript support in the future, we're aiming to replace current usages of <tt>any</tt> with <tt>unknown</tt> on exposed typings for user-provided data\&. To do this in Remix v2 without introducing breaking changes in React Router v6, we have added generics to a number of shared types\&. These continue to default to <tt>any</tt> in React Router and are overridden with <tt>unknown</tt> in Remix\&. In React Router v7 we plan to move these to <tt>unknown</tt> as a breaking change\&. (<a href="https://github.com/remix-run/react-router/pull/10843" >#10843</a>)  - <tt>Location</tt> now accepts a generic for the <tt>location\&.state</tt> value  - <tt>ActionFunctionArgs</tt>/<tt>ActionFunction</tt>/<tt>LoaderFunctionArgs</tt>/<tt>LoaderFunction</tt> now accept a generic for the <tt>context</tt> parameter (only used in SSR usages via <tt>createStaticHandler</tt>)  - The return type of <tt>useMatches</tt> (now exported as <tt>UIMatch</tt>) accepts generics for <tt>match\&.data</tt> and <tt>match\&.handle</tt> - both of which were already set to <tt>unknown</tt>- Move the <tt>\\@private</tt> class export <tt>ErrorResponse</tt> to an <tt>UNSAFE_ErrorResponseImpl</tt> export since it is an implementation detail and there should be no construction of <tt>ErrorResponse</tt> instances in userland\&. This frees us up to export a <tt>type ErrorResponse</tt> which correlates to an instance of the class via <tt>InstanceType</tt>\&. Userland code should only ever be using <tt>ErrorResponse</tt> as a type and should be type-narrowing via <tt>isRouteErrorResponse</tt>\&. (<a href="https://github.com/remix-run/react-router/pull/10811" >#10811</a>)- Export <tt>ShouldRevalidateFunctionArgs</tt> interface (<a href="https://github.com/remix-run/react-router/pull/10797" >#10797</a>)- Removed private/internal APIs only required for the Remix v1 backwards compatibility layer and no longer needed in Remix v2 (<tt>_isFetchActionRedirect</tt>, <tt>_hasFetcherDoneAnything</tt>) (<a href="https://github.com/remix-run/react-router/pull/10715" >#10715</a>)@subsection autotoc_md3309 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.9\&.0</tt>@section autotoc_md3310 6\&.15\&.0@subsection autotoc_md3311 Minor Changes- Add's a new <tt>redirectDocument()</tt> function which allows users to specify that a redirect from a <tt>loader</tt>/<tt>action</tt> should trigger a document reload (via <tt>window\&.location</tt>) instead of attempting to navigate to the redirected location via React Router (<a href="https://github.com/remix-run/react-router/pull/10705" >#10705</a>)@subsection autotoc_md3312 Patch Changes- Ensure <tt>useRevalidator</tt> is referentially stable across re-renders if revalidations are not actively occurring (<a href="https://github.com/remix-run/react-router/pull/10707" >#10707</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.8\&.0</tt>@section autotoc_md3313 6\&.14\&.2@subsection autotoc_md3314 Patch Changes- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.7\&.2</tt>@section autotoc_md3315 6\&.14\&.1@subsection autotoc_md3316 Patch Changes- Fix loop in <tt>unstable_useBlocker</tt> when used with an unstable blocker function (<a href="https://github.com/remix-run/react-router/pull/10652" >#10652</a>)- Fix issues with reused blockers on subsequent navigations (<a href="https://github.com/remix-run/react-router/pull/10656" >#10656</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.7\&.1</tt>@section autotoc_md3317 6\&.14\&.0@subsection autotoc_md3318 Patch Changes- Strip <tt>basename</tt> from locations provided to <tt>unstable_useBlocker</tt> functions to match <tt>useLocation</tt> (<a href="https://github.com/remix-run/react-router/pull/10573" >#10573</a>)- Fix <tt>generatePath</tt> when passed a numeric <tt>0</tt> value parameter (<a href="https://github.com/remix-run/react-router/pull/10612" >#10612</a>)- Fix <tt>unstable_useBlocker</tt> key issues in <tt>StrictMode</tt> (<a href="https://github.com/remix-run/react-router/pull/10573" >#10573</a>)- Fix <tt>tsc --skipLibCheck:false</tt> issues on React 17 (<a href="https://github.com/remix-run/react-router/pull/10622" >#10622</a>)- Upgrade <tt>typescript</tt> to 5\&.1 (<a href="https://github.com/remix-run/react-router/pull/10581" >#10581</a>)- Updated dependencies:  - <tt>\\@remix-run/router\\@1\&.7\&.0</tt>@section autotoc_md3319 6\&.13\&.0@subsection autotoc_md3320 Minor Changes- Move <a href="https://react.dev/reference/react/startTransition" ><tt>React\&.startTransition</tt></a> usage behind a <a href="https://reactrouter.com/v6/guides/api-development-strategy" >future flag</a> to avoid issues with existing incompatible <tt>Suspense</tt> usages\&. We recommend folks adopting this flag to be better compatible with React concurrent mode, but if you run into issues you can continue without the use of <tt>startTransition</tt> until v7\&. Issues usually boils down to creating net-new promises during the render cycle, so if you run into issues you should either lift your promise creation out of the render cycle or put it behind a <tt>useMemo</tt>\&. (<a href="https://github.com/remix-run/react-router/pull/10596" >#10596</a>)  Existing behavior will no longer include <tt>React\&.startTransition</tt>:  @icode{jsx}   <BrowserRouter>    <Routes>{/*\&.\&.\&.*/}</Routes>  </BrowserRouter>  <RouterProvider router={router} />  @endicode   If you wish to enable <tt>React\&.startTransition</tt>, pass the future flag to your component:  @icode{jsx}   <BrowserRouter future={{ v7_startTransition: true }}>    <Routes>{/*\&.\&.\&.*/}</Routes>  </BrowserRouter>  <RouterProvider router={router} future={{ v7_startTransition: true }}/>  @endicode @subsection autotoc_md3321 Patch Changes- Work around webpack/terser <tt>React\&.startTransition</tt> minification bug in production mode (<a href="https://github.com/remix-run/react-router/pull/10588" >#10588</a>)@section autotoc_md3322 6\&.12\&.1<blockquote>&zwj;[!WARNING]Please use version <tt>6\&.13\&.0</tt> or later instead of <tt>6\&.12\&.1</tt>\&. This version suffers from a <tt>webpack</tt>/<tt>terser</tt> minification issue resulting in invalid minified code in your resulting production bundles which can cause issues in your application\&. See <a href="https://github.com/remix-run/react-router/issues/10579" >#10579
+.PP
+for more details\&. 
+.SS "Patch Changes"
+.IP "\(bu" 2
+Adjust feature detection of \fRReact\&.startTransition\fP to fix webpack + react 17 compilation error (\fR#10569\fP)
+.PP
+.SH "6\&.12\&.0"
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+Wrap internal router state updates with \fRReact\&.startTransition\fP if it exists (\fR#10438\fP)
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.6\&.3\fP
+.PP
+
+.PP
+.SH "6\&.11\&.2"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix \fRbasename\fP duplication in descendant \fR<Routes>\fP inside a \fR<RouterProvider>\fP (\fR#10492\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.6\&.2\fP
+.PP
+
+.PP
+.SH "6\&.11\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix usage of \fRComponent\fP API within descendant \fR<Routes>\fP (\fR#10434\fP)
+.IP "\(bu" 2
+Fix bug when calling \fRuseNavigate\fP from \fR<Routes>\fP inside a \fR<RouterProvider>\fP (\fR#10432\fP)
+.IP "\(bu" 2
+Fix usage of \fR<Navigate>\fP in strict mode when using a data router (\fR#10435\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.6\&.1\fP
+.PP
+
+.PP
+.SH "6\&.11\&.0"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Log loader/action errors to the console in dev for easier stack trace evaluation (\fR#10286\fP)
+.IP "\(bu" 2
+Fix bug preventing rendering of descendant \fR<Routes>\fP when \fRRouterProvider\fP errors existed (\fR#10374\fP)
+.IP "\(bu" 2
+Fix inadvertent re-renders when using \fRComponent\fP instead of \fRelement\fP on a route definition (\fR#10287\fP)
+.IP "\(bu" 2
+Fix detection of \fRuseNavigate\fP in the render cycle by setting the \fRactiveRef\fP in a layout effect, allowing the \fRnavigate\fP function to be passed to child components and called in a \fRuseEffect\fP there\&. (\fR#10394\fP)
+.IP "\(bu" 2
+Switched from \fRuseSyncExternalStore\fP to \fRuseState\fP for internal \fR@remix-run/router\fP router state syncing in \fR<RouterProvider>\fP\&. We found some \fRsubtle bugs\fP where router state updates got propagated \fIbefore\fP other normal \fRuseState\fP updates, which could lead to footguns in \fRuseEffect\fP calls\&. (\fR#10377\fP, \fR#10409\fP)
+.IP "\(bu" 2
+Allow \fRuseRevalidator()\fP to resolve a loader-driven error boundary scenario (\fR#10369\fP)
+.IP "\(bu" 2
+Avoid unnecessary unsubscribe/resubscribes on router state changes (\fR#10409\fP)
+.IP "\(bu" 2
+When using a \fRRouterProvider\fP, \fRuseNavigate\fP/\fRuseSubmit\fP/\fRfetcher\&.submit\fP are now stable across location changes, since we can handle relative routing via the \fR@remix-run/router\fP instance and get rid of our dependence on \fRuseLocation()\fP\&. When using \fRBrowserRouter\fP, these hooks remain unstable across location changes because they still rely on \fRuseLocation()\fP\&. (\fR#10336\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.6\&.0\fP
+.PP
+
+.PP
+.SH "6\&.10\&.0"
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+Added support for \fR\fBFuture Flags\fP\fP in React Router\&. The first flag being introduced is \fRfuture\&.v7_normalizeFormMethod\fP which will normalize the exposed \fRuseNavigation()/useFetcher()\fP \fRformMethod\fP fields as uppercase HTTP methods to align with the \fRfetch()\fP behavior\&. (\fR#10207\fP)
+.IP "  \(bu" 4
+When \fRfuture\&.v7_normalizeFormMethod === false\fP (default v6 behavior),
+.IP "    \(bu" 6
+\fRuseNavigation()\&.formMethod\fP is lowercase
+.IP "    \(bu" 6
+\fRuseFetcher()\&.formMethod\fP is lowercase
+.PP
+
+.IP "  \(bu" 4
+When \fRfuture\&.v7_normalizeFormMethod === true\fP:
+.IP "    \(bu" 6
+\fRuseNavigation()\&.formMethod\fP is uppercase
+.IP "    \(bu" 6
+\fRuseFetcher()\&.formMethod\fP is uppercase
+.PP
+
+.PP
+
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix route ID generation when using Fragments in \fRcreateRoutesFromElements\fP (\fR#10193\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.5\&.0\fP
+.PP
+
+.PP
+.SH "6\&.9\&.0"
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+React Router now supports an alternative way to define your route \fRelement\fP and \fRerrorElement\fP fields as React Components instead of React Elements\&. You can instead pass a React Component to the new \fRComponent\fP and \fRErrorBoundary\fP fields if you choose\&. There is no functional difference between the two, so use whichever approach you prefer 😀\&. You shouldn't be defining both, but if you do \fRComponent\fP/\fRErrorBoundary\fP will "win"\&. (\fR#10045\fP)
+
+.PP
+\fBExample JSON Syntax\fP
+
+.PP
+.PP
+.nf
+// Both of these work the same:
+const elementRoutes = [{
+  path: '/',
+  element: <Home />,
+  errorElement: <HomeError />,
+}]
+
+const componentRoutes = [{
+  path: '/',
+  Component: Home,
+  ErrorBoundary: HomeError,
+}]
+
+function Home() { \&.\&.\&. }
+function HomeError() { \&.\&.\&. }
+.fi
+.PP
+
+.PP
+\fBExample JSX Syntax\fP
+
+.PP
+.PP
+.nf
+// Both of these work the same:
+const elementRoutes = createRoutesFromElements(
+  <Route path='/' element={<Home />} errorElement={<HomeError /> } />
+);
+
+const componentRoutes = createRoutesFromElements(
+  <Route path='/' Component={Home} ErrorBoundary={HomeError} />
+);
+
+function Home() { \&.\&.\&. }
+function HomeError() { \&.\&.\&. }
+.fi
+.PP
+
+.IP "\(bu" 2
+\fBIntroducing Lazy Route Modules!\fP (\fR#10045\fP)
+
+.PP
+In order to keep your application bundles small and support code-splitting of your routes, we've introduced a new \fRlazy()\fP route property\&. This is an async function that resolves the non-route-matching portions of your route definition (\fRloader\fP, \fRaction\fP, \fRelement\fP/\fRComponent\fP, \fRerrorElement\fP/\fRErrorBoundary\fP, \fRshouldRevalidate\fP, \fRhandle\fP)\&.
+
+.PP
+Lazy routes are resolved on initial load and during the \fRloading\fP or \fRsubmitting\fP phase of a navigation or fetcher call\&. You cannot lazily define route-matching properties (\fRpath\fP, \fRindex\fP, \fRchildren\fP) since we only execute your lazy route functions after we've matched known routes\&.
+
+.PP
+Your \fRlazy\fP functions will typically return the result of a dynamic import\&.
+
+.PP
+.PP
+.nf
+// In this example, we assume most folks land on the homepage so we include that
+// in our critical\-path bundle, but then we lazily load modules for /a and /b so
+// they don't load until the user navigates to those routes
+let routes = createRoutesFromElements(
+  <Route path="/" element={<Layout />}>
+    <Route index element={<Home />} />
+    <Route path="a" lazy={() => import("\&./a")} />
+    <Route path="b" lazy={() => import("\&./b")} />
+  </Route>,
+);
+.fi
+.PP
+
+.PP
+Then in your lazy route modules, export the properties you want defined for the route:
+
+.PP
+.PP
+.nf
+export async function loader({ request }) {
+  let data = await fetchData(request);
+  return json(data);
+}
+
+// Export a `Component` directly instead of needing to create a React Element from it
+export function Component() {
+  let data = useLoaderData();
+
+  return (
+    <>
+      <h1>You made it!</h1>
+      <p>{data}</p>
+    </>
+  );
+}
+
+// Export an `ErrorBoundary` directly instead of needing to create a React Element from it
+export function ErrorBoundary() {
+  let error = useRouteError();
+  return isRouteErrorResponse(error) ? (
+    <h1>
+      {error\&.status} {error\&.statusText}
+    </h1>
+  ) : (
+    <h1>{error\&.message || error}</h1>
+  );
+}
+.fi
+.PP
+
+.PP
+An example of this in action can be found in the \fR\fRexamples/lazy-loading-router-provider\fP\fP directory of the repository\&.
+
+.PP
+🙌 Huge thanks to @rossipedia for the \fRInitial Proposal\fP and \fRPOC Implementation\fP\&.
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.4\&.0\fP
+.PP
+
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix \fRgeneratePath\fP incorrectly applying parameters in some cases (\fR#10078\fP)
+.IP "\(bu" 2
+Improve memoization for context providers to avoid unnecessary re-renders (\fR#9983\fP)
+.PP
+.SH "6\&.8\&.2"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.3\&.3\fP
+.PP
+
+.PP
+.SH "6\&.8\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Remove inaccurate console warning for POP navigations and update active blocker logic (\fR#10030\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.3\&.2\fP
+.PP
+
+.PP
+.SH "6\&.8\&.0"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.3\&.1\fP
+.PP
+
+.PP
+.SH "6\&.7\&.0"
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+Add \fRunstable_useBlocker\fP hook for blocking navigations within the app's location origin (\fR#9709\fP)
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix \fRgeneratePath\fP when optional params are present (\fR#9764\fP)
+.IP "\(bu" 2
+Update \fR<Await>\fP to accept \fRReactNode\fP as children function return result (\fR#9896\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.3\&.0\fP
+.PP
+
+.PP
+.SH "6\&.6\&.2"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Ensure \fRuseId\fP consistency during SSR (\fR#9805\fP)
+.PP
+.SH "6\&.6\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.2\&.1\fP
+.PP
+
+.PP
+.SH "6\&.6\&.0"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Prevent \fRuseLoaderData\fP usage in \fRerrorElement\fP (\fR#9735\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.2\&.0\fP
+.PP
+
+.PP
+.SH "6\&.5\&.0"
+.PP
+This release introduces support for \fROptional Route Segments\fP\&. Now, adding a \fR?\fP to the end of any path segment will make that entire segment optional\&. This works for both static segments and dynamic parameters\&.
+
+.PP
+\fBOptional Params Examples\fP
+
+.PP
+.IP "\(bu" 2
+\fR<Route path=":lang?/about>\fP will match:
+.IP "  \(bu" 4
+\fR/:lang/about\fP
+.IP "  \(bu" 4
+\fR/about\fP
+.PP
+
+.IP "\(bu" 2
+\fR<Route path="/multistep/:widget1?/widget2?/widget3?">\fP will match:
+.IP "  \(bu" 4
+\fR/multistep\fP
+.IP "  \(bu" 4
+\fR/multistep/:widget1\fP
+.IP "  \(bu" 4
+\fR/multistep/:widget1/:widget2\fP
+.IP "  \(bu" 4
+\fR/multistep/:widget1/:widget2/:widget3\fP
+.PP
+
+.PP
+
+.PP
+\fBOptional Static Segment Example\fP
+
+.PP
+.IP "\(bu" 2
+\fR<Route path="/home?">\fP will match:
+.IP "  \(bu" 4
+\fR/\fP
+.IP "  \(bu" 4
+\fR/home\fP
+.PP
+
+.IP "\(bu" 2
+\fR<Route path="/fr?/about">\fP will match:
+.IP "  \(bu" 4
+\fR/about\fP
+.IP "  \(bu" 4
+\fR/fr/about\fP
+.PP
+
+.PP
+.SS "Minor Changes"
+.IP "\(bu" 2
+Allows optional routes and optional static segments (\fR#9650\fP)
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Stop incorrectly matching on partial named parameters, i\&.e\&. \fR<Route path="prefix-:param">\fP, to align with how splat parameters work\&. If you were previously relying on this behavior then it's recommended to extract the static portion of the path at the \fRuseParams\fP call site: (\fR#9506\fP)
+.PP
+
+.PP
+.PP
+.nf
+// Old behavior at URL /prefix\-123
+<Route path="prefix\-:id" element={<Comp /> }>
+
+function Comp() {
+  let params = useParams(); // { id: '123' }
+  let id = params\&.id; // "123"
+  \&.\&.\&.
+}
+
+// New behavior at URL /prefix\-123
+<Route path=":id" element={<Comp /> }>
+
+function Comp() {
+  let params = useParams(); // { id: 'prefix\-123' }
+  let id = params\&.id\&.replace(/^prefix\-/, ''); // "123"
+  \&.\&.\&.
+}
+.fi
+.PP
+
+.PP
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.1\&.0\fP
+.PP
+
+.PP
+.SH "6\&.4\&.5"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.0\&.5\fP
+.PP
+
+.PP
+.SH "6\&.4\&.4"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.0\&.4\fP
+.PP
+
+.PP
+.SH "6\&.4\&.3"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+\fRuseRoutes\fP should be able to return \fRnull\fP when passing \fRlocationArg\fP (\fR#9485\fP)
+.IP "\(bu" 2
+fix \fRinitialEntries\fP type in \fRcreateMemoryRouter\fP (\fR#9498\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.0\&.3\fP
+.PP
+
+.PP
+.SH "6\&.4\&.2"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Fix \fRIndexRouteObject\fP and \fRNonIndexRouteObject\fP types to make \fRhasErrorElement\fP optional (\fR#9394\fP)
+.IP "\(bu" 2
+Enhance console error messages for invalid usage of data router hooks (\fR#9311\fP)
+.IP "\(bu" 2
+If an index route has children, it will result in a runtime error\&. We have strengthened our \fRRouteObject\fP/\fRRouteProps\fP types to surface the error in TypeScript\&. (\fR#9366\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.0\&.2\fP
+.PP
+
+.PP
+.SH "6\&.4\&.1"
+.PP
+.SS "Patch Changes"
+.IP "\(bu" 2
+Preserve state from \fRinitialEntries\fP (\fR#9288\fP)
+.IP "\(bu" 2
+Updated dependencies:
+.IP "  \(bu" 4
+\fR@remix-run/router@1\&.0\&.1\fP
+.PP
+
+.PP
+.SH "6\&.4\&.0"
+.PP
+Whoa this is a big one! \fR6\&.4\&.0\fP brings all the data loading and mutation APIs over from Remix\&. Here's a quick high level overview, but it's recommended you go check out the \fRdocs\fP, especially the \fRfeature overview\fP and the \fRtutorial\fP\&.
+
+.PP
+\fBNew APIs\fP
+
+.PP
+.IP "\(bu" 2
+Create your router with \fRcreateMemoryRouter\fP
+.IP "\(bu" 2
+Render your router with \fR<RouterProvider>\fP
+.IP "\(bu" 2
+Load data with a Route \fRloader\fP and mutate with a Route \fRaction\fP
+.IP "\(bu" 2
+Handle errors with Route \fRerrorElement\fP
+.IP "\(bu" 2
+Defer non-critical data with \fRdefer\fP and \fRAwait\fP
+.PP
+
+.PP
+\fBBug Fixes\fP
+
+.PP
+.IP "\(bu" 2
+Path resolution is now trailing slash agnostic (#8861)
+.IP "\(bu" 2
+\fRuseLocation\fP returns the scoped location inside a \fR<Routes location>\fP component (#9094)
+.PP
+
+.PP
+\fBUpdated Dependencies\fP
+
+.PP
+.IP "\(bu" 2
+\fR@remix-run/router@1\&.0\&.0\fP 
+.PP
+

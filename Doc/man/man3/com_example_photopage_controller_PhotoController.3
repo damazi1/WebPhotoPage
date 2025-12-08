@@ -1,0 +1,31 @@
+.TH "com.example.photopage.controller.PhotoController" 3 "PinterestApp" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+com.example.photopage.controller.PhotoController
+.SH SYNOPSIS
+.br
+.PP
+.SS "Metody publiczne"
+
+.in +1c
+.ti -1c
+.RI "ResponseEntity<?> \fBuploadPhoto\fP (@RequestParam('file') MultipartFile file, Principal principal)"
+.br
+.ti -1c
+.RI "ResponseEntity<?> \fBdelete\fP (@PathVariable Integer id)"
+.br
+.ti -1c
+.RI "ResponseEntity<?> \fBget\fP (@PathVariable Integer id)"
+.br
+.ti -1c
+.RI "ResponseEntity<?> \fBupdateAvatar\fP (@RequestParam('file') MultipartFile file)"
+.br
+.ti -1c
+.RI "ResponseEntity<?> \fBgetUserAvatar\fP (@PathVariable Integer userId)"
+.br
+.in -1c
+
+.SH "Autor"
+.PP 
+Wygenerowano automatycznie z kodu źródłowego programem Doxygen dla PinterestApp\&.
