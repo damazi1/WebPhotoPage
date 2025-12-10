@@ -4,7 +4,6 @@ export async function fetchAllPosts() {
   try {
     const res = await fetch("http://localhost:8080/post/all", {
       method: "GET",
-      credentials: "include", // TO JEST KLUCZOWE - wysyła ciasteczka sesyjne/auth
       headers: {
         "Content-Type": "application/json",
         // Jeśli mimo to nie zadziała, odkomentuj linię poniżej (jeśli masz token w localStorage):
